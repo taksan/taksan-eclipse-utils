@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.editors.templates">
+      <template
+            autoinsert="true"
+            contextTypeId="java"
+            id="brundle.primitiveColoring.template"
+            name="primitiva">
+         <pattern>
+/* PRIM BEGIN */
+
+/* PRIM END */
+         </pattern>
+      </template>
+   </extension>
+	<extension
+	    id="brundle.primitivecoloring.primitiveMarker"
+	    name="Primitive Marker"
+	    point="org.eclipse.core.resources.markers">
+	  <super
+	    type="org.eclipse.core.resources.textmarker">
+	  </super>
+	</extension>
+	<extension
+	      point="org.eclipse.ui.editors.annotationTypes">
+	   <type
+	         markerType="brundle.primitivecoloring.primitiveMarker"
+	         name="brundle.primitivecoloring.primitiveMarker">
+	   </type>
+	</extension>
+	<extension
+	      point="org.eclipse.ui.editors.markerAnnotationSpecification"
+	      id="brundle.primitiveMarker"
+	      name="primitiveMarker">
+	   <specification
+	         annotationType="brundle.primitivecoloring.primitiveMarker"
+	         colorPreferenceKey="brundle.primitivecoloring.primitiveMarker.color"
+	         colorPreferenceValue="192,255,192"
+	         contributesToHeader="false"
+	         highlightPreferenceKey="brundle.primitivecoloring.primitiveMarker.highlight"
+	         highlightPreferenceValue="true"
+	         includeOnPreferencePage="true"
+	         label="Primitive Marker"
+	         overviewRulerPreferenceKey="brundle.primitivecoloring.primitiveMarker.overview"
+	         overviewRulerPreferenceValue="true"
+	         presentationLayer="0"
+	         textPreferenceKey="brundle.primitivecoloring.primitiveMarker.text"
+	         textPreferenceValue="true"
+	         textStylePreferenceValue="BOX"
+	         verticalRulerPreferenceKey="brundle.primitivecoloring.primitiveMarker.ruler"
+	         verticalRulerPreferenceValue="true">
+	   </specification>
+	</extension>
+  <extension
+        point="org.eclipse.ui.startup">
+     <startup
+           class="brundle.primitiveColoring.Startup">
+     </startup>
+  </extension>
+</plugin>
