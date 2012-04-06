@@ -6,7 +6,5 @@ public class Startup implements IStartup {
 
 	@Override
 	public void earlyStartup() {
-		System.out.println("--");
 	}
-
 }

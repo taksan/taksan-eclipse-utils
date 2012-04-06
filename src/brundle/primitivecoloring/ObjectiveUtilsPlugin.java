@@ -16,20 +16,33 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Activator extends AbstractUIPlugin {
+public class ObjectiveUtilsPlugin extends AbstractUIPlugin {
 	PrimitiveWatcher partListener = new PrimitiveWatcher();
 
-	// The plug-in ID
 	public static final String PLUGIN_ID = "brundle.primitiveColoring"; //$NON-NLS-1$
 
-	private static Activator plugin;
-
-	public Activator() {
-	}
+	private static ObjectiveUtilsPlugin plugin;
 
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		
+		addPrimitiveAnnotationListeners();
+	}
+	public void stop(BundleContext context) throws Exception {
+		plugin = null;
+		super.stop(context);
+	}
+
+	public static ObjectiveUtilsPlugin getDefault() {
+		return plugin;
+	}
+
+	public static ImageDescriptor getImageDescriptor(String path) {
+		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
+
+	private void addPrimitiveAnnotationListeners() {
 		IWorkbench workbench = getWorkbench();
 		IPartListener2 partListener = new PrimitiveWatcher();
 		for (final IWorkbenchWindow w : workbench.getWorkbenchWindows()) {
@@ -37,19 +50,6 @@ public class Activator extends AbstractUIPlugin {
 		}
 		workbench.addWindowListener(windowListener);
 		annotateAllEditors(workbench);
-	}
-
-	public void stop(BundleContext context) throws Exception {
-		plugin = null;
-		super.stop(context);
-	}
-
-	public static Activator getDefault() {
-		return plugin;
-	}
-
-	public static ImageDescriptor getImageDescriptor(String path) {
-		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
 
 	private void annotateAllEditors(IWorkbench workbench) {

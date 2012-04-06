@@ -9,9 +9,9 @@
             id="brundle.primitiveColoring.template"
             name="primitiva">
          <pattern>
-/* PRIM BEGIN */
+/* PRIMITIVE RESERVATION BEGIN */
 
-/* PRIM END */
+/* PRIMITIVE RESERVATION END */
          </pattern>
       </template>
    </extension>
@@ -50,13 +50,14 @@
 	         textPreferenceValue="true"
 	         textStylePreferenceValue="BOX"
 	         verticalRulerPreferenceKey="brundle.primitivecoloring.primitiveMarker.ruler"
-	         verticalRulerPreferenceValue="true">
+	         verticalRulerPreferenceValue="true"
+	         >
 	   </specification>
 	</extension>
-  <extension
-        point="org.eclipse.ui.startup">
-     <startup
-           class="brundle.primitiveColoring.Startup">
-     </startup>
-  </extension>
+	  <extension
+	        point="org.eclipse.ui.startup">
+	     <startup
+	           class="brundle.primitiveColoring.Startup">
+	     </startup>
+	  </extension>
 </plugin>

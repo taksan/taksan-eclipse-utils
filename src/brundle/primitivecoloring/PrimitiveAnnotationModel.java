@@ -17,8 +17,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 
 public class PrimitiveAnnotationModel implements IAnnotationModel {
-	private static final String PRIMITIVE_BEGINNING_MARKER = "/* PRIM BEGIN */";
-	private static final String PRIMITIVE_ENDING_MARKER = "/* PRIM END */";
+	private static final String PRIMITIVE_BEGINNING_MARKER = "/* PRIMITIVE RESERVATION BEGIN */";
+	private static final String PRIMITIVE_ENDING_MARKER = "/* PRIMITIVE RESERVATION END */";
 
 	private Map<IDocument, PrimitiveMarkerAnnotation> annotations = 
 			new LinkedHashMap<IDocument,PrimitiveMarkerAnnotation>();
@@ -43,34 +43,24 @@ public class PrimitiveAnnotationModel implements IAnnotationModel {
 
 	public static void attach(ITextEditor editor) {
 		IDocumentProvider provider = editor.getDocumentProvider();
-		// there may be text editors without document providers (SF #1725100)
 		if (provider == null)
 			return;
-		IAnnotationModel model = provider.getAnnotationModel(editor
-				.getEditorInput());
+		
+		IAnnotationModel model = provider.getAnnotationModel(editor.getEditorInput());
 		if (!(model instanceof IAnnotationModelExtension))
 			return;
+		
 		IAnnotationModelExtension modelex = (IAnnotationModelExtension) model;
 
 		IDocument document = provider.getDocument(editor.getEditorInput());
 
-		PrimitiveAnnotationModel coveragemodel = (PrimitiveAnnotationModel) modelex
+		PrimitiveAnnotationModel primitiveMarkerModel = (PrimitiveAnnotationModel) modelex
 				.getAnnotationModel(KEY);
-		if (coveragemodel == null) {
-			coveragemodel = new PrimitiveAnnotationModel(editor, document);
-			modelex.addAnnotationModel(KEY, coveragemodel);
+		
+		if (primitiveMarkerModel == null) {
+			primitiveMarkerModel = new PrimitiveAnnotationModel(editor, document);
+			modelex.addAnnotationModel(KEY, primitiveMarkerModel);
 		}
-	}
-
-	@Override
-	public void addAnnotationModelListener(IAnnotationModelListener listener) {
-		System.out.println("addAnnotationModelListener");
-	}
-
-	@Override
-	public void removeAnnotationModelListener(IAnnotationModelListener listener) {
-		System.out.println("removeAnnotationModelListener");
-
 	}
 
 	@Override
@@ -79,18 +69,19 @@ public class PrimitiveAnnotationModel implements IAnnotationModel {
 	}
 	
 	protected void updateAnnotation(IDocument document) {
+		document.addDocumentListener(documentListener);
+		
 		int primitiveStart = 
 				document.get().indexOf(PRIMITIVE_BEGINNING_MARKER);
 		
 		if (primitiveStart < 0)
 			return;
 		
-		int length = document.get().indexOf(PRIMITIVE_ENDING_MARKER) - primitiveStart;
+		int primitiveEndStart = document.get().indexOf(PRIMITIVE_ENDING_MARKER);
+		int length = primitiveEndStart - primitiveStart + 
+				PRIMITIVE_BEGINNING_MARKER.length();
 		if (length < 0)
 			return;
-		
-		if (annotations.get(document) == null)
-			document.addDocumentListener(documentListener);
 		
 		annotations.put(
 				document,
@@ -116,6 +107,8 @@ public class PrimitiveAnnotationModel implements IAnnotationModel {
 
 	@Override
 	public Position getPosition(Annotation annotation) {
+		if (!(annotation instanceof PrimitiveMarkerAnnotation))
+			return null;
 		return ((PrimitiveMarkerAnnotation)annotation).getPosition();
 	}
 	
@@ -128,5 +121,13 @@ public class PrimitiveAnnotationModel implements IAnnotationModel {
 	@Override
 	public void removeAnnotation(Annotation annotation) {
 		throw new UnsupportedOperationException("removeAnnotation");
-	}	
+	}
+
+	@Override
+	public void addAnnotationModelListener(IAnnotationModelListener listener) {
+	}
+
+	@Override
+	public void removeAnnotationModelListener(IAnnotationModelListener listener) {
+	}
 }
