@@ -20,8 +20,8 @@ public class PrimitiveAnnotationModel implements IAnnotationModel {
 	private static final String PRIMITIVE_BEGINNING_MARKER = "/* PRIMITIVE RESERVATION BEGIN */";
 	private static final String PRIMITIVE_ENDING_MARKER = "/* PRIMITIVE RESERVATION END */";
 
-	private Map<IDocument, PrimitiveMarkerAnnotation> annotations = 
-			new LinkedHashMap<IDocument,PrimitiveMarkerAnnotation>();
+	private Map<IDocument, Annotation> annotations = 
+			new LinkedHashMap<IDocument,Annotation>();
 	
 	/** Key used to piggyback our model to the editor's model. */
 	private static final Object KEY = new Object();
@@ -71,17 +71,23 @@ public class PrimitiveAnnotationModel implements IAnnotationModel {
 	protected void updateAnnotation(IDocument document) {
 		document.addDocumentListener(documentListener);
 		
-		int primitiveStart = 
-				document.get().indexOf(PRIMITIVE_BEGINNING_MARKER);
+		int primitiveStart = document.get().indexOf(PRIMITIVE_BEGINNING_MARKER);
 		
-		if (primitiveStart < 0)
+		if (primitiveStart < 0) {
+			annotations.remove(document);
 			return;
+		}
 		
 		int primitiveEndStart = document.get().indexOf(PRIMITIVE_ENDING_MARKER);
-		int length = primitiveEndStart - primitiveStart + 
-				PRIMITIVE_BEGINNING_MARKER.length();
-		if (length < 0)
+		int length;
+		if (primitiveEndStart < 0) {
+			annotations.put(document, new PrimitiveErrorMarkerMissing(
+					primitiveStart, 
+					PRIMITIVE_BEGINNING_MARKER.length()));
 			return;
+		}
+		
+		length = primitiveEndStart - primitiveStart + PRIMITIVE_BEGINNING_MARKER.length();
 		
 		annotations.put(
 				document,
@@ -107,9 +113,9 @@ public class PrimitiveAnnotationModel implements IAnnotationModel {
 
 	@Override
 	public Position getPosition(Annotation annotation) {
-		if (!(annotation instanceof PrimitiveMarkerAnnotation))
+		if (!(annotation instanceof PrimitiveMarker))
 			return null;
-		return ((PrimitiveMarkerAnnotation)annotation).getPosition();
+		return ((PrimitiveMarker)annotation).getPosition();
 	}
 	
 

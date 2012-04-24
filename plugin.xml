@@ -15,6 +15,17 @@
          </pattern>
       </template>
    </extension>
+   
+   
+   	<extension
+	    id="brundle.primitivecoloring.primitiveMarkerMissing"
+	    name="Primitive Marker Missing"
+	    point="org.eclipse.core.resources.markers">
+	  <super
+	    type="org.eclipse.core.resources.problemmarker">
+	  </super>
+	</extension>
+   
 	<extension
 	    id="brundle.primitivecoloring.primitiveMarker"
 	    name="Primitive Marker"
@@ -29,7 +40,12 @@
 	         markerType="brundle.primitivecoloring.primitiveMarker"
 	         name="brundle.primitivecoloring.primitiveMarker">
 	   </type>
+	   <type
+	         markerType="brundle.primitivecoloring.primitiveMarkerMissing"
+	         name="brundle.primitivecoloring.primitiveMarkerMissing">
+	   </type>	   
 	</extension>
+	
 	<extension
 	      point="org.eclipse.ui.editors.markerAnnotationSpecification"
 	      id="brundle.primitiveMarker"
@@ -53,11 +69,33 @@
 	         verticalRulerPreferenceValue="true"
 	         >
 	   </specification>
+	   
+	   <specification
+	         annotationType="brundle.primitivecoloring.primitiveMarkerMissing"
+	         colorPreferenceKey="brundle.primitivecoloring.primitiveMarkerMissing.color"
+	         colorPreferenceValue="255,0,0"
+	         contributesToHeader="false"
+	         highlightPreferenceKey="brundle.primitivecoloring.primitiveMarkerMissing.highlight"
+	         highlightPreferenceValue="false"
+	         includeOnPreferencePage="true"
+	         label="Primitive Marker End Missing"
+	         overviewRulerPreferenceKey="brundle.primitivecoloring.primitiveMarkerMissing.overview"
+	         overviewRulerPreferenceValue="true"
+	         presentationLayer="0"
+	         textPreferenceKey="brundle.primitivecoloring.primitiveMarkerMissing.text"
+	         textPreferenceValue="true"
+	         textStylePreferenceValue="SQUIGGLES"
+	         verticalRulerPreferenceKey="brundle.primitivecoloring.primitiveMarkerMissing.ruler"
+	         verticalRulerPreferenceValue="true"
+	         >
+	   </specification>
 	</extension>
+	
+	
 	  <extension
 	        point="org.eclipse.ui.startup">
 	     <startup
-	           class="brundle.primitiveColoring.Startup">
+	           class="brundle.primitivecoloring.Startup">
 	     </startup>
 	  </extension>
 </plugin>
