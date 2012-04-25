@@ -98,4 +98,25 @@
 	           class="brundle.primitivecoloring.Startup">
 	     </startup>
 	  </extension>
+	  
+    <extension
+          point = "org.eclipse.ui.newWizards">
+        <category
+           id = "brundle.eclipse-utils"
+           parentCategory="org.eclipse.ui.Examples"
+           name="Brundle">
+        </category>
+        <wizard
+           id = "objective_utils.actions.CreateTestAction"
+           name = "Create test for"
+           class="objective_utils.actions.CreateTestWizard"
+           category="org.eclipse.ui.Examples/org.eclipse.ui.examples.readmetool.new"
+           icon="$nl$/icons/full/etool16/new_untitled_text_file.gif"
+           canFinishEarly="true"
+           hasPages="false"           
+           >
+           <description>Creates a test class for the given file</description>
+           <selection class="org.eclipse.core.runtime.IAdaptable"/>
+        </wizard>
+    </extension>	  
 </plugin>
