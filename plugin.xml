@@ -108,15 +108,24 @@
         </category>
         <wizard
            id = "objective_utils.actions.CreateTestAction"
-           name = "Create test for"
+           name = "Create test counterpart for"
            class="objective_utils.actions.CreateTestWizard"
            category="org.eclipse.ui.Examples/org.eclipse.ui.examples.readmetool.new"
            icon="$nl$/icons/full/etool16/new_untitled_text_file.gif"
            canFinishEarly="true"
-           hasPages="false"           
+           hasPages="false" 
            >
            <description>Creates a test class for the given file</description>
            <selection class="org.eclipse.core.runtime.IAdaptable"/>
         </wizard>
-    </extension>	  
+    </extension>
+	<extension point="org.eclipse.ui.bindings">
+		<key sequence="Ctrl+\"
+			commandId="objective_utils.actions.CreateTestAction"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+			contextId="org.eclipse.jdt.ui.javaEditorScope"/>
+	</extension>
+ <extension
+       point="org.eclipse.ui.commands">
+ </extension>    
 </plugin>

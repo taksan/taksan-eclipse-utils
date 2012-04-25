@@ -3,6 +3,7 @@ package objective_utils.actions;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -39,13 +40,13 @@ public class CreateTestWizard extends Wizard implements INewWizard {
 		IWorkbenchPage activePage= fWindow.getActivePage();
 		
 		try {
-			ICompilationUnit createdTest = createTestClass(selection);
+			ICompilationUnit createdTest = createOrRetrieveTestCounterpart(selection);
 			if (createdTest == null)
 				return false;
 			
 			IResource resource = createdTest.getResource();
 			
-				IDE.openEditor(activePage, (IFile) resource, true);
+			IDE.openEditor(activePage, (IFile) resource, true);
 		} catch (Exception e) {
 			EditorsPlugin.log(e);
 			return false;
@@ -53,7 +54,7 @@ public class CreateTestWizard extends Wizard implements INewWizard {
 		return true;
 	}
 
-	private ICompilationUnit createTestClass(IStructuredSelection selection) throws JavaModelException {
+	private ICompilationUnit createOrRetrieveTestCounterpart(IStructuredSelection selection) throws JavaModelException {
 		IJavaElement elem = getFirstElement(selection);
 
 		if (elem == null) {
@@ -63,7 +64,7 @@ public class CreateTestWizard extends Wizard implements INewWizard {
 			return null;
 		}
 
-		IPackageFragmentRoot newClassRoot = getNewClassRoot(elem);
+		IPackageFragmentRoot newClassRoot = getNewClassRootBasedOnSelectedElement(elem);
 		
 		if (newClassRoot == null) {
 			MessageDialog.openWarning(fWindow.getShell(), 
@@ -72,32 +73,35 @@ public class CreateTestWizard extends Wizard implements INewWizard {
 			return null;
 		}
 		
-		IPackageFragment testPackage = getTestPackage(elem, newClassRoot);
+		IPackageFragment unitPackage = getNewUnitPackage(elem, newClassRoot);
 
-		String testUnitNameFileName = makeTestUnitName(elem);
-		ICompilationUnit compilationUnit = testPackage.getCompilationUnit(testUnitNameFileName);
-		boolean testAlreadyExists = compilationUnit != null;
+		String newUnitNameFileName = makeNewUnitName(elem);
+		ICompilationUnit compilationUnit = unitPackage.getCompilationUnit(newUnitNameFileName);
+		boolean testAlreadyExists = compilationUnit.getResource().exists();
 		if (testAlreadyExists)
 			return compilationUnit;
 		
-		return createTestClass(testPackage, testUnitNameFileName);
+		return createTestClass(unitPackage, newUnitNameFileName);
 	}
 
-	private ICompilationUnit createTestClass(IPackageFragment testPackage,
-			String testUnitNameFileName) throws JavaModelException {
+	private ICompilationUnit createTestClass(
+			IPackageFragment unitPackage,
+			String unitFileName) 
+					throws JavaModelException {
+		
 		IProgressMonitor monitor = getMonitor();
-		ICompilationUnit parentUnit = testPackage.createCompilationUnit(testUnitNameFileName, "",
+		ICompilationUnit parentUnit = unitPackage.createCompilationUnit(unitFileName, "",
 				false, monitor);
 
 		parentUnit.becomeWorkingCopy(monitor);
 		
-		String typeName = testUnitNameFileName.replace(".java", "");
+		String typeName = unitFileName.replace(".java", "");
 		IBuffer buffer = parentUnit.getBuffer();
-		String testContent = "package " +testPackage.getElementName() + ";\n"+
+		String unitContentContent = "package " +unitPackage.getElementName() + ";\n"+
 				"\n" +
 				"public class " + typeName + " { \n"+
 				"}";
-		buffer.setContents(testContent);
+		buffer.setContents(unitContentContent);
 
 		IType createdType = parentUnit.getType(typeName);
 
@@ -106,36 +110,47 @@ public class CreateTestWizard extends Wizard implements INewWizard {
 		return createdTestUnit;
 	}
 
-	private String makeTestUnitName(IJavaElement elem) {
-		return elem.getElementName().replaceFirst(".java", "Test.java");
+	private String makeNewUnitName(IJavaElement elem) {
+		String elementName = elem.getElementName();
+		if (elementName.endsWith("Test.java")) {
+			return elementName.replaceFirst("Test.java", ".java");
+		}
+		return elementName.replaceFirst(".java", "Test.java");
 	}
 
-	private IPackageFragment getTestPackage(
+	private IPackageFragment getNewUnitPackage(
 			IJavaElement elem,
-			IPackageFragmentRoot testRoot)
+			IPackageFragmentRoot newUnitRoot)
 			throws JavaModelException {
 		IProgressMonitor monitor = getMonitor();
 		IPackageFragment originalPack = (IPackageFragment) elem
 				.getAncestor(IJavaElement.PACKAGE_FRAGMENT);
-		IPackageFragment testPackage = testRoot.createPackageFragment(
+		IPackageFragment newUnitPackage = newUnitRoot.createPackageFragment(
 				originalPack.getElementName(), 
 				true, 
 				monitor);
-		return testPackage;
+		return newUnitPackage;
 	}
 
-	private IPackageFragmentRoot getNewClassRoot(IJavaElement elem)
+	private IPackageFragmentRoot getNewClassRootBasedOnSelectedElement(IJavaElement elem)
 			throws JavaModelException {
 		IJavaProject project = elem.getJavaProject();
 		IPackageFragmentRoot[] packageFragmentRoots = project.getPackageFragmentRoots();
-		IPackageFragmentRoot testRoot = null;
 		
-		for (IPackageFragmentRoot iPackageFragmentRoot : packageFragmentRoots) {
-			if (iPackageFragmentRoot.getPath().toString().contains("src/test/java")) {
-				testRoot = iPackageFragmentRoot;
+		String selecteElemPath = elem.getResource().getFullPath().toFile().getAbsolutePath();
+		String target = "test";
+		if (selecteElemPath.contains("/test/java")) {
+			target = "main";
+		}
+		
+		for (IPackageFragmentRoot fragment : packageFragmentRoots) {
+			IPath path = fragment.getPath();
+			String fragmentPath = path.toFile().getAbsolutePath();
+			if (fragmentPath.contains("src/"+target+"/java")) {
+				return fragment;
 			}
 		}
-		return testRoot;
+		return null;
 	}
 
 	private IJavaElement getFirstElement(IStructuredSelection selection) {
