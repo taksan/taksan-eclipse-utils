@@ -1,4 +1,4 @@
-package brundle.primitivecoloring;
+package objective.primitivehighlight;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;

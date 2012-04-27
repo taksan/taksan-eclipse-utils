@@ -95,37 +95,65 @@
 	  <extension
 	        point="org.eclipse.ui.startup">
 	     <startup
-	           class="brundle.primitivecoloring.Startup">
+	           class="objective.Startup">
 	     </startup>
 	  </extension>
-	  
-    <extension
-          point = "org.eclipse.ui.newWizards">
-        <category
-           id = "brundle.eclipse-utils"
-           parentCategory="org.eclipse.ui.Examples"
-           name="Brundle">
-        </category>
-        <wizard
-           id = "objective_utils.actions.CreateTestAction"
-           name = "Create test counterpart for"
-           class="objective_utils.actions.CreateTestWizard"
-           category="org.eclipse.ui.Examples/org.eclipse.ui.examples.readmetool.new"
-           icon="$nl$/icons/full/etool16/new_untitled_text_file.gif"
-           canFinishEarly="true"
-           hasPages="false" 
-           >
-           <description>Creates a test class for the given file</description>
-           <selection class="org.eclipse.core.runtime.IAdaptable"/>
-        </wizard>
-    </extension>
-	<extension point="org.eclipse.ui.bindings">
-		<key sequence="Ctrl+\"
-			commandId="objective_utils.actions.CreateTestAction"
+    
+	 <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.runtime.IAdaptable"
+            id="objective.actions.CreateTestCounterpartAction.contribution">
+         <menu
+               label="Objective"
+               path="additions"
+               id="Objective.menu">
+            <separator
+                  name="testGroup">
+            </separator>
+         </menu>
+         <action
+               label="Create test counterpart"
+               class="objective.actions.CreateTestCounterpartAction"
+               menubarPath="Objective.menu/testGroup"
+               enablesFor="1"
+               id="objective.actions.CreateTestCounterpartAction"
+               definitionId="objective.actions.CreateTestCounterpartAction">
+         </action>
+      </objectContribution>
+   </extension>
+    
+    
+	<extension
+       id="objective.eclipse.bindings"
+       point="org.eclipse.ui.bindings">
+		<key 
+			sequence="Ctrl+0"
+			commandId="objective.actions.CreateTestCounterpartAction"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-			contextId="org.eclipse.jdt.ui.javaEditorScope"/>
+			/>
 	</extension>
- <extension
-       point="org.eclipse.ui.commands">
- </extension>    
+   
+	 <extension
+	       id="objective.commands"
+	       point="org.eclipse.ui.commands">
+	     <command
+            id="objective.actions.CreateTestCounterpartAction"
+            name="CreateTestCounterpartAction">
+	     </command>
+	 </extension>
+  <extension
+        point="org.eclipse.ui.editorActions">
+     <editorContribution
+           id="brundle.eclipse.editorContribution2"
+           targetID="org.eclipse.jdt.ui.CompilationUnitEditor">
+        <action
+              class="objective.actions.CreateTestCounterpartAction"
+              definitionId="objective.actions.CreateTestCounterpartAction"
+              id="objective.actions.CreateTestCounterpartAction"
+              label="CreateTestCounterpartAction"
+              style="push">
+        </action>
+     </editorContribution>
+  </extension>
 </plugin>

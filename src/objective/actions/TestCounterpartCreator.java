@@ -1,8 +1,6 @@
-package objective_utils.actions;
+package objective.actions;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -16,49 +14,18 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.INewWizard;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.eclipse.swt.widgets.Shell;
 
-@SuppressWarnings("restriction")
-public class CreateTestWizard extends Wizard implements INewWizard {
-	private IWorkbenchWindow fWindow;
-	private IStructuredSelection selection;
+public class TestCounterpartCreator {
+	private final Shell shell;
 
-	@Override
-	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		this.selection = selection;
-		fWindow= workbench.getActiveWorkbenchWindow();
-	}
-	
-	public boolean performFinish() {
-		IWorkbenchPage activePage= fWindow.getActivePage();
+	public TestCounterpartCreator(Shell shell) {
+		this.shell = shell;
 		
-		try {
-			ICompilationUnit createdTest = createOrRetrieveTestCounterpart(selection);
-			if (createdTest == null)
-				return false;
-			
-			IResource resource = createdTest.getResource();
-			
-			IDE.openEditor(activePage, (IFile) resource, true);
-		} catch (Exception e) {
-			EditorsPlugin.log(e);
-			return false;
-		} 
-		return true;
 	}
-
-	private ICompilationUnit createOrRetrieveTestCounterpart(IStructuredSelection selection) throws JavaModelException {
-		IJavaElement elem = getFirstElement(selection);
-
+	public IResource createOrRetrieve(IJavaElement elem) throws JavaModelException {
 		if (elem == null) {
-			MessageDialog.openWarning(fWindow.getShell(), 
+			MessageDialog.openWarning(this.shell, 
 					"Can't create test",
 					"You need to select a class file to create a test");
 			return null;
@@ -67,7 +34,7 @@ public class CreateTestWizard extends Wizard implements INewWizard {
 		IPackageFragmentRoot newClassRoot = getNewClassRootBasedOnSelectedElement(elem);
 		
 		if (newClassRoot == null) {
-			MessageDialog.openWarning(fWindow.getShell(), 
+			MessageDialog.openWarning(this.shell, 
 					"Can't create test",
 					"You need a src/test/java folder");
 			return null;
@@ -79,9 +46,10 @@ public class CreateTestWizard extends Wizard implements INewWizard {
 		ICompilationUnit compilationUnit = unitPackage.getCompilationUnit(newUnitNameFileName);
 		boolean testAlreadyExists = compilationUnit.getResource().exists();
 		if (testAlreadyExists)
-			return compilationUnit;
+			return compilationUnit.getResource();
 		
-		return createTestClass(unitPackage, newUnitNameFileName);
+		ICompilationUnit createdClass = createTestClass(unitPackage, newUnitNameFileName);
+		return createdClass.getResource();
 	}
 
 	private ICompilationUnit createTestClass(
@@ -152,20 +120,7 @@ public class CreateTestWizard extends Wizard implements INewWizard {
 		}
 		return null;
 	}
-
-	private IJavaElement getFirstElement(IStructuredSelection selection) {
-		IJavaElement elem = null;
-		if (selection != null && !selection.isEmpty()) {
-			Object selectedElement = selection.getFirstElement();
-			if (selectedElement instanceof IAdaptable) {
-				IAdaptable adaptable = (IAdaptable) selectedElement;
-
-				elem = (IJavaElement) adaptable.getAdapter(IJavaElement.class);
-			}
-		}
-		return elem;
-	}
-
+	
 	private IProgressMonitor getMonitor() {
 		return new NullProgressMonitor();
 	}

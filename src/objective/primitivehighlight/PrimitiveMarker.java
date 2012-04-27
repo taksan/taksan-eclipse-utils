@@ -1,4 +1,4 @@
-package brundle.primitivecoloring;
+package objective.primitivehighlight;
 
 import org.eclipse.jface.text.Position;
 

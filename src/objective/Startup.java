@@ -1,4 +1,4 @@
-package brundle.primitivecoloring;
+package objective;
 
 import org.eclipse.ui.IStartup;
 
