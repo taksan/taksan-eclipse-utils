@@ -37,10 +37,6 @@ public class PrimitiveAnnotationModel implements IAnnotationModel {
 		}
 	};
 
-	public PrimitiveAnnotationModel(ITextEditor editor, IDocument document) {
-	}
-
-
 	public static void attach(ITextEditor editor) {
 		IDocumentProvider provider = editor.getDocumentProvider();
 		if (provider == null)
@@ -52,13 +48,11 @@ public class PrimitiveAnnotationModel implements IAnnotationModel {
 		
 		IAnnotationModelExtension modelex = (IAnnotationModelExtension) model;
 
-		IDocument document = provider.getDocument(editor.getEditorInput());
-
 		PrimitiveAnnotationModel primitiveMarkerModel = (PrimitiveAnnotationModel) modelex
 				.getAnnotationModel(KEY);
 		
 		if (primitiveMarkerModel == null) {
-			primitiveMarkerModel = new PrimitiveAnnotationModel(editor, document);
+			primitiveMarkerModel = new PrimitiveAnnotationModel();
 			modelex.addAnnotationModel(KEY, primitiveMarkerModel);
 		}
 	}
