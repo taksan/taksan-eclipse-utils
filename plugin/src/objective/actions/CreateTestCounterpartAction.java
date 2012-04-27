@@ -6,6 +6,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorActionDelegate;
@@ -18,6 +19,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 @SuppressWarnings("restriction")
 public class CreateTestCounterpartAction implements IObjectActionDelegate, IEditorActionDelegate {
@@ -56,7 +58,7 @@ public class CreateTestCounterpartAction implements IObjectActionDelegate, IEdit
 		try {
 			TestCounterpartCreator c = new TestCounterpartCreator(fWindow.getShell());
 			IResource counterpartResource = c.createOrRetrieve(sourceClass);
-			openCreatedResource(counterpartResource);
+			openCreatedResource(counterpartResource, c.getCaretPositionForNewFile());
 		} catch (Exception e) {
 			EditorsPlugin.log(e);
 		} 
@@ -78,15 +80,25 @@ public class CreateTestCounterpartAction implements IObjectActionDelegate, IEdit
 		return elem;
 	}
 
-	private void openCreatedResource(IResource resource) {
+	private void openCreatedResource(IResource resource, int position) {
 		if (resource == null)
 			return;
 		
 		IWorkbenchPage activePage= fWindow.getActivePage();
 		try {
 			IDE.openEditor(activePage, (IFile) resource, true);
+			setCaretPositionIfNewFile(position, activePage);
 		} catch (PartInitException e) {
 			EditorsPlugin.log(e);
+		}
+	}
+
+	private void setCaretPositionIfNewFile(int position,
+			IWorkbenchPage activePage) {
+		if (position > -1) {
+			ISelection selection = new TextSelection(position,0);
+			((ITextEditor)activePage.getActiveEditor()).getSelectionProvider().setSelection(
+					selection);
 		}
 	}
 }

@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class TestCounterpartCreator {
 	private final Shell shell;
+	private int position=-1;
 
 	public TestCounterpartCreator(Shell shell) {
 		this.shell = shell;
@@ -67,8 +68,9 @@ public class TestCounterpartCreator {
 		IBuffer buffer = parentUnit.getBuffer();
 		String unitContentContent = "package " +unitPackage.getElementName() + ";\n"+
 				"\n" +
-				"public class " + typeName + " { \n"+
+				"public class " + typeName + " { \n\n"+
 				"}";
+		this.position = unitContentContent.length()-2;
 		buffer.setContents(unitContentContent);
 
 		IType createdType = parentUnit.getType(typeName);
@@ -123,5 +125,8 @@ public class TestCounterpartCreator {
 	
 	private IProgressMonitor getMonitor() {
 		return new NullProgressMonitor();
+	}
+	public int getCaretPositionForNewFile() {
+		return position;
 	}
 }
