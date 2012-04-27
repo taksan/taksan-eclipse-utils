@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/objective-eclipse-utils.feature_1.0.0.qualifier.jar" id="objective-eclipse-utils.feature" version="1.0.0.qualifier">
+      <category name="objective-eclipse-utils.category"/>
+   </feature>
+   <category-def name="objective-eclipse-utils.category" label="Utilidades de Produtividade Objective">
+      <description>
+         objective-eclipse-utils
+      </description>
+   </category-def>
+</site>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="objective-eclipse-utils.feature"
+      label="objective-eclipse-utils.feature"
+      version="1.0.0.qualifier">
+
+   <description url="http://autotelebuild/hudson/job/objective-eclipse-utils">
+      Utilitarios para produtividade no ambiente da Objective
+   </description>
+
+   <copyright url="http://autotelebuild/hudson/job/objective-eclipse-utils">
+        This software was developed by brundle and can be used anywhere.
+   </copyright>
+
+   <license url="http://autotelebuild/hudson/job/objective-eclipse-utils"><![CDATA[	
+        This software was developed by brundle and can be used anywhere.
+]]></license>
+
+   <plugin
+         id="objective-eclipse-utils"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
