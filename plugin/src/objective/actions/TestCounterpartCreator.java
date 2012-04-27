@@ -1,17 +1,25 @@
 package objective.actions;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IBuffer;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -113,14 +121,33 @@ public class TestCounterpartCreator {
 			target = "main";
 		}
 		
+		String counterpartFolder = "/src/"+target+"/java";
 		for (IPackageFragmentRoot fragment : packageFragmentRoots) {
 			IPath path = fragment.getPath();
 			String fragmentPath = path.toFile().getAbsolutePath();
-			if (fragmentPath.contains("src/"+target+"/java")) {
+			if (fragmentPath.contains(counterpartFolder)) {
 				return fragment;
 			}
 		}
-		return null;
+		return createMissingFolder(project, counterpartFolder);
+	}
+	private IPackageFragmentRoot createMissingFolder(IJavaProject project, String missingFolder)
+			throws JavaModelException {
+		IClasspathEntry newSourceEntry = JavaCore.newSourceEntry(project.getProject().getFullPath().append(missingFolder));
+		
+		IClasspathEntry[] rawClasspath = project.getRawClasspath();
+		List<IClasspathEntry> asList = Arrays.asList(rawClasspath);
+		List<IClasspathEntry> linked = new LinkedList<IClasspathEntry>();
+		linked.addAll(asList);
+		linked.add(newSourceEntry);
+		project.setRawClasspath(linked.toArray(new IClasspathEntry[0]), getMonitor());
+		IFolder folder = project.getProject().getFolder(missingFolder);
+		try {
+			folder.create(true, true, getMonitor());
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+		return project.getPackageFragmentRoot(folder);
 	}
 	
 	private IProgressMonitor getMonitor() {
