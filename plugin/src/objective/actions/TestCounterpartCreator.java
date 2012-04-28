@@ -21,37 +21,19 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Shell;
 
 public class TestCounterpartCreator {
-	private final Shell shell;
-	private int position=-1;
+	private int caretPosition=-1;
 
-	public TestCounterpartCreator(Shell shell) {
-		this.shell = shell;
-		
-	}
-	public IResource createOrRetrieve(IJavaElement elem) throws JavaModelException {
-		if (elem == null) {
-			MessageDialog.openWarning(this.shell, 
-					"Can't create test",
-					"You need to select a class file to create a test");
-			return null;
+	public IResource createOrRetrieve(IJavaElement baseElem)  {
+		if (baseElem == null) {
+			throw new NullElementNotAllowedException();
 		}
 
-		IPackageFragmentRoot newClassRoot = getNewClassRootBasedOnSelectedElement(elem);
-		
-		if (newClassRoot == null) {
-			MessageDialog.openWarning(this.shell, 
-					"Can't create test",
-					"You need a src/test/java folder");
-			return null;
-		}
-		
-		IPackageFragment unitPackage = getNewUnitPackage(elem, newClassRoot);
+		IPackageFragmentRoot newClassRoot = getNewClassRootBasedOnSelectedElement(baseElem);
+		IPackageFragment unitPackage = getNewUnitPackage(baseElem, newClassRoot);
 
-		String newUnitNameFileName = makeNewUnitName(elem);
+		String newUnitNameFileName = makeNewUnitName(baseElem);
 		ICompilationUnit compilationUnit = unitPackage.getCompilationUnit(newUnitNameFileName);
 		boolean testAlreadyExists = compilationUnit.getResource().exists();
 		if (testAlreadyExists)
@@ -61,31 +43,42 @@ public class TestCounterpartCreator {
 		return createdClass.getResource();
 	}
 
+	public int getCaretPositionForNewFile() {
+		return caretPosition;
+	}
 	private ICompilationUnit createTestClass(
 			IPackageFragment unitPackage,
-			String unitFileName) 
-					throws JavaModelException {
-		
-		IProgressMonitor monitor = getMonitor();
-		ICompilationUnit parentUnit = unitPackage.createCompilationUnit(unitFileName, "",
-				false, monitor);
-
-		parentUnit.becomeWorkingCopy(monitor);
-		
-		String typeName = unitFileName.replace(".java", "");
-		IBuffer buffer = parentUnit.getBuffer();
-		String unitContentContent = "package " +unitPackage.getElementName() + ";\n"+
-				"\n" +
-				"public class " + typeName + " { \n\n"+
-				"}";
-		this.position = unitContentContent.length()-2;
-		buffer.setContents(unitContentContent);
-
-		IType createdType = parentUnit.getType(typeName);
-
-		ICompilationUnit createdTestUnit = createdType.getCompilationUnit();
-		createdTestUnit.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
-		return createdTestUnit;
+			String unitFileName) {
+		try {
+			IProgressMonitor monitor = getMonitor();
+			ICompilationUnit parentUnit = unitPackage.createCompilationUnit(
+					unitFileName, "", false, monitor);
+	
+			parentUnit.becomeWorkingCopy(monitor);
+			
+			String typeName = unitFileName.replace(".java", "");
+			IBuffer buffer = parentUnit.getBuffer();
+			String unitContent = getUnitContent(unitPackage, typeName);
+			buffer.setContents(unitContent);
+			IType createdType = parentUnit.getType(typeName);
+			ICompilationUnit createdTestUnit = createdType.getCompilationUnit();
+			createdTestUnit.commitWorkingCopy(true, new SubProgressMonitor(monitor, 1));
+			
+			this.caretPosition = unitContent.length()-2;
+			return createdTestUnit;
+		}catch(JavaModelException e) {
+			throw new UnhandledJavaModelException(e);
+		}
+	}
+	
+	private String getUnitContent(IPackageFragment unitPackage, String typeName) {
+		return String.format(
+		"package %s;\n"+
+		"\n" +
+		"public class %s { \n" +
+		"\t\n"+
+		"}", 
+		unitPackage.getElementName(), typeName);
 	}
 
 	private String makeNewUnitName(IJavaElement elem) {
@@ -99,22 +92,34 @@ public class TestCounterpartCreator {
 	private IPackageFragment getNewUnitPackage(
 			IJavaElement elem,
 			IPackageFragmentRoot newUnitRoot)
-			throws JavaModelException {
-		IProgressMonitor monitor = getMonitor();
-		IPackageFragment originalPack = (IPackageFragment) elem
-				.getAncestor(IJavaElement.PACKAGE_FRAGMENT);
-		IPackageFragment newUnitPackage = newUnitRoot.createPackageFragment(
-				originalPack.getElementName(), 
-				true, 
-				monitor);
-		return newUnitPackage;
+	{
+		try {
+			IProgressMonitor monitor = getMonitor();
+			IPackageFragment originalPkg = (IPackageFragment) elem.getAncestor(IJavaElement.PACKAGE_FRAGMENT);
+			
+			boolean force = true;
+			IPackageFragment newUnitPackage = newUnitRoot.createPackageFragment(
+					originalPkg.getElementName(), 
+					force, 
+					monitor);
+			
+			return newUnitPackage;
+		}catch(JavaModelException e) {
+			throw new UnhandledJavaModelException(e);
+		}
 	}
 
-	private IPackageFragmentRoot getNewClassRootBasedOnSelectedElement(IJavaElement elem)
-			throws JavaModelException {
+	private IPackageFragmentRoot getNewClassRootBasedOnSelectedElement(IJavaElement elem){
 		IJavaProject project = elem.getJavaProject();
-		IPackageFragmentRoot[] packageFragmentRoots = project.getPackageFragmentRoots();
 		
+		String counterpartFolder = getCounterpartFolder(elem);
+		IFolder folder = project.getProject().getFolder(counterpartFolder);
+		if (!folder.exists())
+			return createMissingFolder(project, counterpartFolder);
+		return project.getPackageFragmentRoot(folder);
+	}
+	
+	private String getCounterpartFolder(IJavaElement elem) {
 		String selecteElemPath = elem.getResource().getFullPath().toFile().getAbsolutePath();
 		String target = "test";
 		if (selecteElemPath.contains("/test/java")) {
@@ -122,26 +127,13 @@ public class TestCounterpartCreator {
 		}
 		
 		String counterpartFolder = "/src/"+target+"/java";
-		for (IPackageFragmentRoot fragment : packageFragmentRoots) {
-			IPath path = fragment.getPath();
-			String fragmentPath = path.toFile().getAbsolutePath();
-			if (fragmentPath.contains(counterpartFolder)) {
-				return fragment;
-			}
-		}
-		return createMissingFolder(project, counterpartFolder);
+		return counterpartFolder;
 	}
-	private IPackageFragmentRoot createMissingFolder(IJavaProject project, String missingFolder)
-			throws JavaModelException {
-		IClasspathEntry newSourceEntry = JavaCore.newSourceEntry(project.getProject().getFullPath().append(missingFolder));
+	
+	private IPackageFragmentRoot createMissingFolder(IJavaProject project, String missingFolderPath) {
+		addNewFolderToClasspath(project, missingFolderPath);
 		
-		IClasspathEntry[] rawClasspath = project.getRawClasspath();
-		List<IClasspathEntry> asList = Arrays.asList(rawClasspath);
-		List<IClasspathEntry> linked = new LinkedList<IClasspathEntry>();
-		linked.addAll(asList);
-		linked.add(newSourceEntry);
-		project.setRawClasspath(linked.toArray(new IClasspathEntry[0]), getMonitor());
-		IFolder folder = project.getProject().getFolder(missingFolder);
+		IFolder folder = project.getProject().getFolder(missingFolderPath);
 		try {
 			folder.create(true, true, getMonitor());
 		} catch (CoreException e) {
@@ -150,10 +142,46 @@ public class TestCounterpartCreator {
 		return project.getPackageFragmentRoot(folder);
 	}
 	
+	private void addNewFolderToClasspath(
+			IJavaProject project,
+			String missingFolder) 
+	{
+		try {
+			IPath missingFolderPath = project.getProject().getFullPath().append(missingFolder);
+			IClasspathEntry newSourceEntry = JavaCore.newSourceEntry(missingFolderPath);
+			
+			IClasspathEntry[] classpathEntries = addNewEntryToClasspath(project, newSourceEntry);
+			project.setRawClasspath(classpathEntries, getMonitor());
+		}catch(JavaModelException e) {
+			throw new UnhandledJavaModelException(e);
+		}
+	}
+
+	private IClasspathEntry[] addNewEntryToClasspath(IJavaProject project,
+			IClasspathEntry newSourceEntry) throws JavaModelException {
+		IClasspathEntry[] rawClasspath = project.getRawClasspath();
+		List<IClasspathEntry> unmodifiableList = Arrays.asList(rawClasspath);
+		List<IClasspathEntry> linked = new LinkedList<IClasspathEntry>(unmodifiableList);
+		linked.add(newSourceEntry);
+		IClasspathEntry[] classpathEntries = linked.toArray(new IClasspathEntry[0]);
+		return classpathEntries;
+	}
+	
 	private IProgressMonitor getMonitor() {
 		return new NullProgressMonitor();
 	}
-	public int getCaretPositionForNewFile() {
-		return position;
+	
+	@SuppressWarnings("serial")
+	static class NullElementNotAllowedException extends RuntimeException {
+		public NullElementNotAllowedException(){
+			super("Can't create counterpart for null java element");
+		}
+	}
+	
+	@SuppressWarnings("serial")
+	static class UnhandledJavaModelException extends RuntimeException {
+		public UnhandledJavaModelException(Throwable e){
+			super(e);
+		}
 	}
 }

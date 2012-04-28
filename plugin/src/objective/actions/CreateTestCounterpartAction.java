@@ -6,6 +6,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -55,13 +56,20 @@ public class CreateTestCounterpartAction implements IObjectActionDelegate, IEdit
 	}
 	
 	private void createOrOpenTestCounterpart() {
-		try {
-			TestCounterpartCreator c = new TestCounterpartCreator(fWindow.getShell());
-			IResource counterpartResource = c.createOrRetrieve(sourceClass);
-			openCreatedResource(counterpartResource, c.getCaretPositionForNewFile());
-		} catch (Exception e) {
-			EditorsPlugin.log(e);
-		} 
+			TestCounterpartCreator c = new TestCounterpartCreator();
+			try {
+				openCreatedResource(
+						c.createOrRetrieve(sourceClass), 
+						c.getCaretPositionForNewFile());
+			}catch(TestCounterpartCreator.NullElementNotAllowedException e){
+				displayElementNotAllowedMessage();
+			}
+	}
+
+	private void displayElementNotAllowedMessage() {
+		MessageDialog.openWarning(fWindow.getShell(), 
+				"Can't create test",
+				"You need to select a class file to create a test");
 	}
 	
 	private IJavaElement getFirstElement(IStructuredSelection selection) {
@@ -81,9 +89,6 @@ public class CreateTestCounterpartAction implements IObjectActionDelegate, IEdit
 	}
 
 	private void openCreatedResource(IResource resource, int position) {
-		if (resource == null)
-			return;
-		
 		IWorkbenchPage activePage= fWindow.getActivePage();
 		try {
 			IDE.openEditor(activePage, (IFile) resource, true);
