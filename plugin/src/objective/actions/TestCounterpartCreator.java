@@ -131,9 +131,9 @@ public class TestCounterpartCreator {
 	}
 	
 	private IPackageFragmentRoot createMissingFolder(IJavaProject project, String missingFolderPath) {
+		IFolder folder = project.getProject().getFolder(missingFolderPath);
 		addNewFolderToClasspath(project, missingFolderPath);
 		
-		IFolder folder = project.getProject().getFolder(missingFolderPath);
 		try {
 			folder.create(true, true, getMonitor());
 		} catch (CoreException e) {
