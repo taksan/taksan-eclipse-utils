@@ -131,18 +131,36 @@ public class TestCounterpartCreator {
 	}
 	
 	private IPackageFragmentRoot createMissingFolder(IJavaProject project, String missingFolderPath) {
-		IFolder folder = project.getProject().getFolder(missingFolderPath);
-		addNewFolderToClasspath(project, missingFolderPath);
+		IFolder folder = createFolderAndParents(project, missingFolderPath);
+		addFolderToClasspath(project, missingFolderPath);
 		
-		try {
-			folder.create(true, true, getMonitor());
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
 		return project.getPackageFragmentRoot(folder);
 	}
+
+	private IFolder createFolderAndParents(IJavaProject project, String missingFolderPath) {
+		String[] parts = missingFolderPath.replaceFirst("^/","").split("/");
+		String pathToCreate="";
+		for (String folderPart : parts) {
+			pathToCreate +="/" + folderPart;
+			createFolder(project, pathToCreate);
+		}
+		
+		return project.getProject().getFolder(missingFolderPath);
+	}
+
+	private IFolder createFolder(IJavaProject project, String pathToCreate) {
+		IFolder folder = project.getProject().getFolder(pathToCreate);
+		if (!folder.exists()) {
+			try {
+				folder.create(true, true, null);
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+		}
+		return folder;
+	}
 	
-	private void addNewFolderToClasspath(
+	private void addFolderToClasspath(
 			IJavaProject project,
 			String missingFolder) 
 	{
