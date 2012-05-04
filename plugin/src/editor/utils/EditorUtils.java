@@ -9,6 +9,8 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -21,13 +23,18 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 public class EditorUtils {
 	
+	@SuppressWarnings("restriction")
 	public static void goToClassMethod(String classMethod) {
+		if (classMethod == null || classMethod.length() == 0) {
+			return;
+		}
 		IJavaProject project = getActiveJavaProject();
         
         String className = classMethod.replaceAll("(.*)\\.[^.]+(\\(\\))?$", "$1");
         String methodName = classMethod.replaceAll(".*\\.([^.]*(\\(\\))?$)", "$1");
         try {
-			IType iType = project.findType(className);
+			IType iType = getClassTypeOrCry(project, className);
+				
 			IMethod method = iType.getMethod(methodName, new String[0]);
 			ISourceRange sourceRange = method.getSourceRange();
 			
@@ -36,8 +43,16 @@ public class EditorUtils {
 			ITextEditor openEditor = (ITextEditor) IDE.openEditor(activePage, (IFile) iType.getResource(), true);
 			openEditor.selectAndReveal(sourceRange.getOffset(), 1);
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			JavaPlugin.log(e);
 		}
+	}
+
+	private static IType getClassTypeOrCry(IJavaProject project,
+			String className) throws JavaModelException {
+		IType iType = project.findType(className);
+		if (iType == null)
+			throw new EditorUtilsException("Class "+ className + " not found.");
+		return iType;
 	}
 
 	private static IJavaProject getActiveJavaProject() {

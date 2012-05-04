@@ -17,7 +17,7 @@ public class GotoMethodServer {
 			public void run() {
 				try {
 					while (true) {
-						ServerSocket serverSocket = new ServerSocket(47921);
+						ServerSocket serverSocket = new ServerSocket(47922);
 						handleClientConnection(serverSocket);
 					}
 				} catch (IOException e) {
