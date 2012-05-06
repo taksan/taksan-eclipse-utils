@@ -3,7 +3,6 @@ package editor.utils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
@@ -32,12 +31,13 @@ public class EditorUtils {
 		JavaPlugin.logErrorMessage(classMethod);
 		
         
-        String className = classMethod.replaceAll("(.*)\\.[^.]+(\\(\\))?$", "$1");
-        String methodName = classMethod.replaceAll(".*\\.([^.]*(\\(\\))?$)", "$1");
+        String className = classMethod.replaceAll("(.*)\\.[^.]+(\\(.*\\))?$", "$1");
+        String methodName = classMethod.replaceAll(".*\\.([^.]*?)(\\(.*\\))?$", "$1");
+        String methodParameters = classMethod.replaceAll(".*\\.[^.]*?(\\(.*\\))?$", "$1");
         try {
 			IType iType = getClassTypeOrCry(className);
 				
-			IMethod method = iType.getMethod(methodName, new String[0]);
+			IMethod method = iType.getMethod(methodName, methodParameters.split(","));
 			ISourceRange sourceRange = method.getSourceRange();
 			
 			IWorkbenchPage activePage= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();

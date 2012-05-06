@@ -17,9 +17,9 @@ public class GotoMethodServer {
 		new Thread() {
 			public void run() {
 				try {
+					ServerSocket serverSocket = new ServerSocket(serverPort);
 					while (true) {
-						ServerSocket serverSocket = new ServerSocket(serverPort);
-						handleClientConnection(serverSocket);
+						handleClientConnection(serverSocket.accept());
 					}
 				} catch (IOException e) {
 					throw new IllegalStateException(e);
@@ -33,19 +33,16 @@ public class GotoMethodServer {
 		return port;
 	}
 
-	private Socket handleClientConnection(ServerSocket serverSocket)
+	private void handleClientConnection(Socket client)
 			throws IOException {
-		Socket client = serverSocket.accept();
-		BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-		while (!client.isClosed()) {
+		try {
+			BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 			String message = in.readLine();
 			processMessage(message);
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-			}
 		}
-		return client;
+		finally {
+			client.close();
+		}
 	}
 
 	protected void processMessage(final String message) {
