@@ -31,22 +31,42 @@ public class EditorUtils {
 		JavaPlugin.logErrorMessage(classMethod);
 		
         
-        String className = classMethod.replaceAll("(.*)\\.[^.]+(\\(.*\\))?$", "$1");
-        String methodName = classMethod.replaceAll(".*\\.([^.]*?)(\\(.*\\))?$", "$1");
-        String methodParameters = classMethod.replaceAll(".*\\.[^.]*?(\\(.*\\))?$", "$1");
+        String className = getClassName(classMethod);
+        String methodName = getMethodName(classMethod);
+        String[] methodSignature = getMethodSignature(classMethod);
         try {
 			IType iType = getClassTypeOrCry(className);
 				
-			IMethod method = iType.getMethod(methodName, methodParameters.split(","));
+			
+			IMethod method = iType.getMethod(methodName, methodSignature);
 			ISourceRange sourceRange = method.getSourceRange();
 			
 			IWorkbenchPage activePage= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			
 			ITextEditor openEditor = (ITextEditor) IDE.openEditor(activePage, (IFile) iType.getResource(), true);
-			openEditor.selectAndReveal(sourceRange.getOffset(), 1);
+			int length = method.getSource().split("\n")[0].length();
+			openEditor.selectAndReveal(sourceRange.getOffset(), length);
 		} catch (Exception e) {
 			JavaPlugin.log(e);
 		}
+	}
+
+	private static String[] getMethodSignature(String classMethod) {
+		if (!classMethod.contains("("))
+			return new String[0];
+		String methodParameters = classMethod.replaceAll(".*\\((.*)\\)", "$1");
+		if (methodParameters.trim().length() == 0)
+			return new String[0];
+		
+        return methodParameters.split(",");
+	}
+
+	private static String getMethodName(String classMethod) {
+		return classMethod.replaceAll(".*\\.([^.]*?)(\\(.*\\))?$", "$1");
+	}
+
+	private static String getClassName(String classMethod) {
+		return classMethod.replaceAll("(.*)\\.[^.]+(\\(.*\\))?$", "$1");
 	}
 
 	private static IType getClassTypeOrCry(String className) throws JavaModelException {
