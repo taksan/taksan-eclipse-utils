@@ -3,6 +3,7 @@ package editor.utils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
@@ -28,12 +29,13 @@ public class EditorUtils {
 		if (classMethod == null || classMethod.length() == 0) {
 			return;
 		}
-		IJavaProject project = getActiveJavaProject();
+		JavaPlugin.logErrorMessage(classMethod);
+		
         
         String className = classMethod.replaceAll("(.*)\\.[^.]+(\\(\\))?$", "$1");
         String methodName = classMethod.replaceAll(".*\\.([^.]*(\\(\\))?$)", "$1");
         try {
-			IType iType = getClassTypeOrCry(project, className);
+			IType iType = getClassTypeOrCry(className);
 				
 			IMethod method = iType.getMethod(methodName, new String[0]);
 			ISourceRange sourceRange = method.getSourceRange();
@@ -47,12 +49,25 @@ public class EditorUtils {
 		}
 	}
 
-	private static IType getClassTypeOrCry(IJavaProject project,
-			String className) throws JavaModelException {
-		IType iType = project.findType(className);
-		if (iType == null)
-			throw new EditorUtilsException("Class "+ className + " not found.");
-		return iType;
+	private static IType getClassTypeOrCry(String className) throws JavaModelException {
+		IJavaProject[] projects = getAllProjects();
+		for(IJavaProject project: projects){
+		
+			IType iType = project.findType(className);
+			if (iType != null)
+				return iType;
+		}
+		throw new EditorUtilsException("Class "+ className + " not found.");
+	}
+
+	private static IJavaProject[] getAllProjects() {
+		IJavaProject project = getActiveJavaProject();
+				
+        try {
+			return project.getParent().getJavaModel().getJavaProjects();
+		} catch (JavaModelException e) {
+			throw new EditorUtilsException(e);
+		}
 	}
 
 	private static IJavaProject getActiveJavaProject() {
