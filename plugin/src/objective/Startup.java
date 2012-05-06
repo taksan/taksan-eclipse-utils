@@ -16,6 +16,7 @@ public class Startup implements IStartup {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void earlyStartup() {
+		
 		TemplateStore codeTemplateStore = JavaPlugin.getDefault().getCodeTemplateStore();
 		Template methodBody = codeTemplateStore.findTemplate("methodbody");
 		methodBody.setPattern("throw new RuntimeException(\"NOT IMPLEMENTED\");");
@@ -33,6 +34,7 @@ public class Startup implements IStartup {
 		} catch (BackingStoreException e) {
 			throw new RuntimeException(e);
 		}
+		
 		
 		startGotoMethodServer();
 	}

@@ -5,19 +5,25 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.launching.IVMInstall2;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.swt.widgets.Display;
 
 import editor.utils.EditorUtils;
+import editor.utils.EditorUtilsException;
 
 public class GotoMethodServer {
 
 	public void start() {
-		final int serverPort = getAvailableServerPort();
 		new Thread() {
 			public void run() {
 				try {
-					ServerSocket serverSocket = new ServerSocket(serverPort);
+					ServerSocket serverSocket = makeServerSocket();
 					while (true) {
 						handleClientConnection(serverSocket.accept());
 					}
@@ -28,8 +34,38 @@ public class GotoMethodServer {
 		}.start();
 	}
 	
-	private int getAvailableServerPort() {
+	protected ServerSocket makeServerSocket() {
 		int port = 47922;
+		int maxRetries = 10;
+		while (maxRetries > 0) {
+			try {
+				ServerSocket serverSocket = new ServerSocket(port);
+				setPortSystemProperty(port);
+				return serverSocket;
+			} catch (IOException e) {
+				port++;
+			}
+		}
+		throw new EditorUtilsException("Could not bind GotoMethodServer to any port after " + maxRetries + " attempts.");
+	}
+
+	private int setPortSystemProperty(int port) {
+		Set<IVMInstall2> visited = new HashSet<IVMInstall2>();
+		IJavaProject[] allProjects = EditorUtils.getAllProjects();
+		for (IJavaProject iJavaProject : allProjects) {
+			try {
+				IVMInstall2 vmInstall = (IVMInstall2) JavaRuntime.getVMInstall(iJavaProject);
+				if (visited.contains(vmInstall))
+					continue;
+				String vmArgs = vmInstall.getVMArgs();
+				vmArgs = vmArgs.replaceAll("[ ]*-DMethodServerPort=\\d+","");
+				String newVmArgs = vmArgs+ " -DMethodServerPort=" + port;
+				vmInstall.setVMArgs(newVmArgs);
+				visited.add(vmInstall);
+			} catch (CoreException e) {
+			}
+		}
+		
 		return port;
 	}
 
