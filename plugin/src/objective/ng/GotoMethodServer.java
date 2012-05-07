@@ -18,7 +18,7 @@ import org.eclipse.jdt.launching.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 
 import editor.utils.EditorUtils;
-import editor.utils.EditorUtilsException;
+import editor.utils.ObjectiveEclipseUtilsException;
 
 public class GotoMethodServer {
 
@@ -49,7 +49,7 @@ public class GotoMethodServer {
 				port++;
 			}
 		}
-		throw new EditorUtilsException("Could not bind GotoMethodServer to any port after " + maxRetries + " attempts.");
+		throw new ObjectiveEclipseUtilsException("Could not bind GotoMethodServer to any port after " + maxRetries + " attempts.");
 	}
 
 	private int setPortSystemProperty(final int port) {
@@ -63,7 +63,7 @@ public class GotoMethodServer {
 				addGotoServerPortToSystemProperties(port, vmInstall);
 				visited.add(vmInstall);
 			} catch (CoreException e) {
-				throw new EditorUtilsException(e);
+				throw new ObjectiveEclipseUtilsException(e);
 			}
 		}
 		JavaRuntime.addVMInstallChangedListener(new IVMInstallChangedListenerImplementation(port));

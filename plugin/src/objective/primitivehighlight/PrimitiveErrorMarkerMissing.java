@@ -5,7 +5,7 @@ import org.eclipse.jface.text.source.Annotation;
 
 public class PrimitiveErrorMarkerMissing extends Annotation implements PrimitiveMarker {
 
-	private static final String PRIMITIVE_MARKER_MISSING_ID = "brundle.primitivecoloring.primitiveMarkerMissing";
+	private static final String PRIMITIVE_MARKER_MISSING_ID = "objective.eclipse.utils.primitiveMarkerMissing";
 	private Position position;
 
 	public PrimitiveErrorMarkerMissing(int startOff, int length) {

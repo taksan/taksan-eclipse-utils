@@ -5,7 +5,7 @@ import org.eclipse.jface.text.source.Annotation;
 
 public class PrimitiveMarkerAnnotation extends Annotation implements PrimitiveMarker {
 
-	private static final String PRIMITIVE_MARKER_ID = "brundle.primitivecoloring.primitiveMarker";
+	private static final String PRIMITIVE_MARKER_ID = "objective.eclipse.utils.primitiveMarker";
 	private final Position position;
 
 	public PrimitiveMarkerAnnotation(int startOff, int length) {

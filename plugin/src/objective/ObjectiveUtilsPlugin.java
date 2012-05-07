@@ -2,6 +2,8 @@ package objective;
 
 import objective.primitivehighlight.PrimitiveAnnotationModel;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPartListener2;
@@ -22,7 +24,7 @@ import org.osgi.framework.BundleContext;
 public class ObjectiveUtilsPlugin extends AbstractUIPlugin {
 	PrimitiveWatcher partListener = new PrimitiveWatcher();
 
-	public static final String PLUGIN_ID = "brundle.primitiveColoring"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "objective.eclipse.utils"; //$NON-NLS-1$
 
 	private static ObjectiveUtilsPlugin plugin;
 
@@ -106,5 +108,18 @@ public class ObjectiveUtilsPlugin extends AbstractUIPlugin {
 		@Override public void partVisible(IWorkbenchPartReference partRef) { }
 
 		@Override public void partInputChanged(IWorkbenchPartReference partRef) { }
+	}
+	
+	public static void log(Exception e) {
+		plugin.getLog().log(errorStatus(e.getMessage(), e));
+	}
+
+	public static void log(String message, Exception e) {
+		plugin.getLog().log(errorStatus(message, e));
 	}	
+	
+	public static IStatus errorStatus(String message, Throwable t) {
+		return new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, message, t);
+	}
+
 }

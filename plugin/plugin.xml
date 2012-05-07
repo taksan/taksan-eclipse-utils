@@ -6,7 +6,7 @@
       <template
             autoinsert="true"
             contextTypeId="java"
-            id="brundle.primitiveColoring.template"
+            id="objective.eclipse.utils.template"
             name="primitiva">
          <pattern>
 /* PRIMITIVE RESERVATION BEGIN */
@@ -18,7 +18,7 @@
    
    
    	<extension
-	    id="brundle.primitivecoloring.primitiveMarkerMissing"
+	    id="objective.eclipse.utils.primitiveMarkerMissing"
 	    name="Primitive Marker Missing"
 	    point="org.eclipse.core.resources.markers">
 	  <super
@@ -27,7 +27,7 @@
 	</extension>
    
 	<extension
-	    id="brundle.primitivecoloring.primitiveMarker"
+	    id="objective.eclipse.utils.primitiveMarker"
 	    name="Primitive Marker"
 	    point="org.eclipse.core.resources.markers">
 	  <super
@@ -37,55 +37,55 @@
 	<extension
 	      point="org.eclipse.ui.editors.annotationTypes">
 	   <type
-	         markerType="brundle.primitivecoloring.primitiveMarker"
-	         name="brundle.primitivecoloring.primitiveMarker">
+	         markerType="objective.eclipse.utils.primitiveMarker"
+	         name="objective.eclipse.utils.primitiveMarker">
 	   </type>
 	   <type
-	         markerType="brundle.primitivecoloring.primitiveMarkerMissing"
-	         name="brundle.primitivecoloring.primitiveMarkerMissing">
+	         markerType="objective.eclipse.utils.primitiveMarkerMissing"
+	         name="objective.eclipse.utils.primitiveMarkerMissing">
 	   </type>	   
 	</extension>
 	
 	<extension
 	      point="org.eclipse.ui.editors.markerAnnotationSpecification"
-	      id="brundle.primitiveMarker"
+	      id="objective.eclipse.utils.primitiveMarker"
 	      name="primitiveMarker">
 	   <specification
-	         annotationType="brundle.primitivecoloring.primitiveMarker"
-	         colorPreferenceKey="brundle.primitivecoloring.primitiveMarker.color"
+	         annotationType="objective.eclipse.utils.primitiveMarker"
+	         colorPreferenceKey="objective.eclipse.utils.primitiveMarker.color"
 	         colorPreferenceValue="192,255,192"
 	         contributesToHeader="false"
-	         highlightPreferenceKey="brundle.primitivecoloring.primitiveMarker.highlight"
+	         highlightPreferenceKey="objective.eclipse.utils.primitiveMarker.highlight"
 	         highlightPreferenceValue="true"
 	         includeOnPreferencePage="true"
 	         label="Primitive Marker"
-	         overviewRulerPreferenceKey="brundle.primitivecoloring.primitiveMarker.overview"
+	         overviewRulerPreferenceKey="objective.eclipse.utils.primitiveMarker.overview"
 	         overviewRulerPreferenceValue="true"
 	         presentationLayer="0"
-	         textPreferenceKey="brundle.primitivecoloring.primitiveMarker.text"
+	         textPreferenceKey="objective.eclipse.utils.primitiveMarker.text"
 	         textPreferenceValue="true"
 	         textStylePreferenceValue="BOX"
-	         verticalRulerPreferenceKey="brundle.primitivecoloring.primitiveMarker.ruler"
+	         verticalRulerPreferenceKey="objective.eclipse.utils.primitiveMarker.ruler"
 	         verticalRulerPreferenceValue="true"
 	         >
 	   </specification>
 	   
 	   <specification
-	         annotationType="brundle.primitivecoloring.primitiveMarkerMissing"
-	         colorPreferenceKey="brundle.primitivecoloring.primitiveMarkerMissing.color"
+	         annotationType="objective.eclipse.utils.primitiveMarkerMissing"
+	         colorPreferenceKey="objective.eclipse.utils.primitiveMarkerMissing.color"
 	         colorPreferenceValue="255,0,0"
 	         contributesToHeader="false"
-	         highlightPreferenceKey="brundle.primitivecoloring.primitiveMarkerMissing.highlight"
+	         highlightPreferenceKey="objective.eclipse.utils.primitiveMarkerMissing.highlight"
 	         highlightPreferenceValue="false"
 	         includeOnPreferencePage="true"
 	         label="Primitive Marker End Missing"
-	         overviewRulerPreferenceKey="brundle.primitivecoloring.primitiveMarkerMissing.overview"
+	         overviewRulerPreferenceKey="objective.eclipse.utils.primitiveMarkerMissing.overview"
 	         overviewRulerPreferenceValue="true"
 	         presentationLayer="0"
-	         textPreferenceKey="brundle.primitivecoloring.primitiveMarkerMissing.text"
+	         textPreferenceKey="objective.eclipse.utils.primitiveMarkerMissing.text"
 	         textPreferenceValue="true"
 	         textStylePreferenceValue="SQUIGGLES"
-	         verticalRulerPreferenceKey="brundle.primitivecoloring.primitiveMarkerMissing.ruler"
+	         verticalRulerPreferenceKey="objective.eclipse.utils.primitiveMarkerMissing.ruler"
 	         verticalRulerPreferenceValue="true"
 	         >
 	   </specification>
@@ -145,7 +145,7 @@
   <extension
         point="org.eclipse.ui.editorActions">
      <editorContribution
-           id="brundle.eclipse.editorContribution2"
+           id="objective.eclipse.utils.createTestCounterpartEditorContribution"
            targetID="org.eclipse.jdt.ui.CompilationUnitEditor">
         <action
               class="objective.actions.CreateTestCounterpartAction"

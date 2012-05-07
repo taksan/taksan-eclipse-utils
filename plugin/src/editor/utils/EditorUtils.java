@@ -1,5 +1,7 @@
 package editor.utils;
 
+import objective.ObjectiveUtilsPlugin;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -10,7 +12,6 @@ import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -22,13 +23,10 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 public class EditorUtils {
 	
-	@SuppressWarnings("restriction")
 	public static void goToClassMethod(String classMethod) {
 		if (classMethod == null || classMethod.length() == 0) {
 			return;
 		}
-		JavaPlugin.logErrorMessage(classMethod);
-		
         
         String className = getClassName(classMethod);
         String methodName = getMethodName(classMethod);
@@ -46,7 +44,7 @@ public class EditorUtils {
 			int length = method.getSource().split("\n")[0].length();
 			openEditor.selectAndReveal(sourceRange.getOffset(), length);
 		} catch (Exception e) {
-			JavaPlugin.log(e);
+			ObjectiveUtilsPlugin.log(e);
 		}
 	}
 
@@ -54,7 +52,7 @@ public class EditorUtils {
         try {
 			return getJavaModel().getJavaProjects();
 		} catch (JavaModelException e) {
-			throw new EditorUtilsException(e);
+			throw new ObjectiveEclipseUtilsException(e);
 		}
     }
 
@@ -118,6 +116,6 @@ public class EditorUtils {
 			if (iType != null)
 				return iType;
 		}
-		throw new EditorUtilsException("Class "+ className + " not found.");
+		throw new ObjectiveEclipseUtilsException("Class "+ className + " not found.");
 	}
 }
