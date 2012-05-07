@@ -12,11 +12,8 @@ import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -32,16 +29,12 @@ public class EditorUtils {
         String methodName = getMethodName(classMethod);
         String[] methodSignature = getMethodSignature(classMethod);
         try {
-			IType iType = getClassTypeOrCry(className);
-				
+			IType klass = getClassTypeOrCry(className);
+			ITextEditor openEditor = openClassInEditor(klass);
 			
-			IMethod method = iType.getMethod(methodName, methodSignature);
+			IMethod method = klass.getMethod(methodName, methodSignature);
 			ISourceRange sourceRange = method.getSourceRange();
-			
-			IWorkbenchPage activePage= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-			
-			ITextEditor openEditor = (ITextEditor) IDE.openEditor(activePage, (IFile) iType.getResource(), true);
-			int length = method.getSource().split("\n")[0].length();
+			int length = getMethodSignatureLength(method);
 			openEditor.selectAndReveal(sourceRange.getOffset(), length);
 		} catch (Exception e) {
 			ObjectiveUtilsPlugin.log(e);
@@ -49,45 +42,29 @@ public class EditorUtils {
 	}
 
 	public static IJavaProject[] getAllProjects() {
-        try {
+	    try {
 			return getJavaModel().getJavaProjects();
 		} catch (JavaModelException e) {
 			throw new ObjectiveEclipseUtilsException(e);
 		}
-    }
-
-    public static IJavaModel getJavaModel() {
-        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        return JavaCore.create(workspace.getRoot());
-    }
-
-	public static void goToLineInCurrentFile(int lineNumber) {
-		IEditorPart activeEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-		goToLine(activeEditor, lineNumber);
 	}
 
-	public static void goToLine(IEditorPart editorPart, int lineNumber) {
-		if (!(editorPart instanceof ITextEditor) || lineNumber <= 0) {
-			return;
-		}
-		ITextEditor editor = (ITextEditor) editorPart;
-		IDocument document = editor.getDocumentProvider().getDocument(
-				editor.getEditorInput());
-		if (document != null) {
-			IRegion lineInfo = null;
-			try {
-				// line count internaly starts with 0, and not with 1 like in
-				// GUI
-				lineInfo = document.getLineInformation(lineNumber - 1);
-			} catch (BadLocationException e) {
-				// ignored because line number may not really exist in document,
-				// we guess this...
-			}
-			if (lineInfo != null) {
-				editor.selectAndReveal(lineInfo.getOffset(),
-						lineInfo.getLength());
-			}
-		}
+	private static IJavaModel getJavaModel() {
+	    IWorkspace workspace = ResourcesPlugin.getWorkspace();
+	    return JavaCore.create(workspace.getRoot());
+	}
+
+	private static ITextEditor openClassInEditor(IType iType)
+			throws PartInitException {
+		IWorkbenchPage activePage= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		
+		ITextEditor openEditor = (ITextEditor) IDE.openEditor(activePage, (IFile) iType.getResource(), true);
+		return openEditor;
+	}
+
+	private static int getMethodSignatureLength(IMethod method)
+			throws JavaModelException {
+		return method.getSource().split("\n")[0].length();
 	}
 
 	private static String[] getMethodSignature(String classMethod) {
