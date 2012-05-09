@@ -51,6 +51,9 @@ public class CreateTestCounterpartAction implements IObjectActionDelegate, IEdit
 	}
 
 	private void storeWindow(IWorkbenchPart targetPart) {
+		if (targetPart == null)
+			return;
+		
 		IWorkbenchPartSite site = targetPart.getSite();
 		fWindow = site.getWorkbenchWindow();
 	}
