@@ -156,4 +156,12 @@
         </action>
      </editorContribution>
   </extension>
+  <extension point="org.eclipse.jdt.debug.javaLogicalStructures">
+  	<javaLogicalStructure
+  	  name="foun"
+  	  description="ince"
+      subtypes="true"
+      value="return objective.core.entidade.inspector.AtributosFormaterImpl.map(this)"
+      type="objective.core.entidade.Entidade"/>
+	</extension>
 </plugin>

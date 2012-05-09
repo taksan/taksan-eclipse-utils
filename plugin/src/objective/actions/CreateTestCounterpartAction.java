@@ -46,14 +46,13 @@ public class CreateTestCounterpartAction implements IObjectActionDelegate, IEdit
 
 	@Override
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
+		if (targetEditor == null)
+			return;
 		storeWindow(targetEditor);
 		sourceClass = EditorUtility.getEditorInputJavaElement(targetEditor, false);
 	}
 
 	private void storeWindow(IWorkbenchPart targetPart) {
-		if (targetPart == null)
-			return;
-		
 		IWorkbenchPartSite site = targetPart.getSite();
 		fWindow = site.getWorkbenchWindow();
 	}
