@@ -91,7 +91,7 @@ public class CreateTestCounterpartAction implements IObjectActionDelegate, IEdit
 		return elem;
 	}
 
-	private void openCreatedResource(IResource resource, int position) {
+	private void openCreatedResource(IResource resource, int position) {		
 		IWorkbenchPage activePage= fWindow.getActivePage();
 		try {
 			IDE.openEditor(activePage, (IFile) resource, true);
