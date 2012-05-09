@@ -158,10 +158,9 @@
   </extension>
   <extension point="org.eclipse.jdt.debug.javaLogicalStructures">
   	<javaLogicalStructure
-  	  name="foun"
-  	  description="ince"
+  	  description="EntidadeAtributos"
       subtypes="true"
-      value="return objective.core.entidade.inspector.AtributosFormaterImpl.map(this)"
+      value="return objective.core.entidade.inspector.AtributosFormaterImpl.map(this);"
       type="objective.core.entidade.Entidade"/>
 	</extension>
 </plugin>
