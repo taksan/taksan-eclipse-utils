@@ -27,7 +27,7 @@ public class Startup implements IStartup {
 		
 		debugPrefs.setValue("org.eclipse.jdt.debug.ui.show_details","INLINE_FORMATTERS");
 		String previousPref = debugPrefs.getString("org.eclipse.jdt.debug.ui.detail_formatters");
-		String hashmapDetail = "java.util.HashMap$Entry,getKey()+\\\"\\\\=\\\"+getValue(),1";
+		String hashmapDetail = "java.util.HashMap$Entry,return getKey()+\\\"\\\\=\\\"+getValue();,1";
 		
 		previousPref = previousPref.replace(hashmapDetail, "");
 		
