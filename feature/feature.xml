@@ -5,11 +5,33 @@
       version="1.0.0.qualifier">
 
    <description url="http://autotelebuild/hudson/job/objective-eclipse-utils">
-      Utilitarios para produtividade no ambiente da Objective
+      Some useful utilities to develop in Objective projects
+
+		- Use CTRL+0 in maven project to create a test for the current open class, 
+		  or create the class for the current test, or just toggle between the two if they exists 
+		  
+		- In Civilized classes with primitive reservation, the reservation background becomes highlighted (in green) 
+		  to make it easier to determine whether you're watching primitive or civilized code 
+
+		- When you double-click a scenario in harness explorer, will open the scenario class and method in the eclips
+		  that launched harness explorer 
+
    </description>
 
    <copyright url="http://autotelebuild/hudson/job/objective-eclipse-utils">
         This software was developed by brundle and can be used anywhere.
+
+		Some useful utilities to develop in Objective projects
+
+			- Use CTRL+0 in maven project to create a test for the current open class, 
+			  or create the class for the current test, or just toggle between the two if they exists 
+			  
+			- In Civilized classes with primitive reservation, the reservation background becomes highlighted (in green) 
+			  to make it easier to determine whether you're watching primitive or civilized code 
+
+			- When you double-click a scenario in harness explorer, will open the scenario class and method in the eclips
+			  that launched harness explorer 
+
    </copyright>
 
    <license url="http://autotelebuild/hudson/job/objective-eclipse-utils"><![CDATA[	

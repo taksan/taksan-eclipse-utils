@@ -46,6 +46,8 @@ public class CreateTestCounterpartAction implements IObjectActionDelegate, IEdit
 
 	@Override
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
+		if (targetEditor == null)
+			return;
 		storeWindow(targetEditor);
 		sourceClass = EditorUtility.getEditorInputJavaElement(targetEditor, false);
 	}
@@ -88,7 +90,7 @@ public class CreateTestCounterpartAction implements IObjectActionDelegate, IEdit
 		return elem;
 	}
 
-	private void openCreatedResource(IResource resource, int position) {
+	private void openCreatedResource(IResource resource, int position) {		
 		IWorkbenchPage activePage= fWindow.getActivePage();
 		try {
 			IDE.openEditor(activePage, (IFile) resource, true);
