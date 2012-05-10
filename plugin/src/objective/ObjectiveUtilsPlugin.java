@@ -116,9 +116,17 @@ public class ObjectiveUtilsPlugin extends AbstractUIPlugin {
 
 	public static void log(String message, Exception e) {
 		plugin.getLog().log(errorStatus(message, e));
-	}	
+	}
 	
-	public static IStatus errorStatus(String message, Throwable t) {
+	public static void log(String message) {
+		plugin.getLog().log(infoStatus(message));
+	}
+	
+	private static IStatus infoStatus(String message) {
+		return new Status(IStatus.INFO, PLUGIN_ID, IStatus.INFO, message, null);
+	}
+	
+	private static IStatus errorStatus(String message, Throwable t) {
 		return new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, message, t);
 	}
 

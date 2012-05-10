@@ -8,6 +8,8 @@ import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
 
+import objective.ObjectiveUtilsPlugin;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -44,6 +46,7 @@ public class GotoMethodServer {
 			try {
 				ServerSocket serverSocket = new ServerSocket(port);
 				setPortSystemProperty(port);
+				ObjectiveUtilsPlugin.log("GotoMethodServer bound to port " + port);
 				return serverSocket;
 			} catch (IOException e) {
 				port++;

@@ -9,7 +9,6 @@ import org.eclipse.ui.IStartup;
 @SuppressWarnings("restriction")
 public class Startup implements IStartup {
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void earlyStartup() {
 		
