@@ -1,5 +1,6 @@
 package objective;
 
+import objective.debug.FilterStackTraceManager;
 import objective.ng.GotoMethodServer;
 
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -12,6 +13,7 @@ public class Startup implements IStartup {
 
 	@Override
 	public void earlyStartup() {
+		new FilterStackTraceManager().makeStackTraceFilterable();
 		
 		JavaPlugin javaPlugin = JavaPlugin.getDefault();
 		IPreferenceStore preferences = javaPlugin.getPreferenceStore(); 
