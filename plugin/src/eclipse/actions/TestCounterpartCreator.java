@@ -1,4 +1,4 @@
-package objective.actions;
+package eclipse.actions;
 
 import java.util.Arrays;
 import java.util.LinkedList;

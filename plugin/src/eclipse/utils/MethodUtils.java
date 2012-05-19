@@ -1,6 +1,5 @@
-package editor.utils;
+package eclipse.utils;
 
-import objective.ObjectiveUtilsPlugin;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
@@ -18,7 +17,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-public class EditorUtils {
+import eclipse.tools.TaksanUtilsPlugin;
+
+public class MethodUtils {
 	
 	public static void goToClassMethod(String classMethod) {
 		if (classMethod == null || classMethod.length() == 0) {
@@ -37,7 +38,7 @@ public class EditorUtils {
 			int length = getMethodSignatureLength(method);
 			openEditor.selectAndReveal(sourceRange.getOffset(), length);
 		} catch (Exception e) {
-			ObjectiveUtilsPlugin.log(e);
+			TaksanUtilsPlugin.log(e);
 		}
 	}
 
@@ -45,7 +46,7 @@ public class EditorUtils {
 	    try {
 			return getJavaModel().getJavaProjects();
 		} catch (JavaModelException e) {
-			throw new ObjectiveEclipseUtilsException(e);
+			throw new EclipseUtilsException(e);
 		}
 	}
 
@@ -93,6 +94,6 @@ public class EditorUtils {
 			if (iType != null)
 				return iType;
 		}
-		throw new ObjectiveEclipseUtilsException("Class "+ className + " not found.");
+		throw new EclipseUtilsException("Class "+ className + " not found.");
 	}
 }

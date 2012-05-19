@@ -1,45 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="objective-eclipse-utils.feature"
-      label="objective-eclipse-utils.feature"
+      id="taksan-eclipse-utils.feature"
+      label="taksan-eclipse-utils.feature"
       version="1.0.0.qualifier">
 
-   <description url="http://autotelebuild/hudson/job/objective-eclipse-utils">
-      Some useful utilities to develop in Objective projects
-
+   <description url="http://autotelebuild/hudson/job/taksan-eclipse-utils">
+      Some useful utilities: 
 		- Use CTRL+0 in maven project to create a test for the current open class, 
 		  or create the class for the current test, or just toggle between the two if they exists 
 		  
-		- In Civilized classes with primitive reservation, the reservation background becomes highlighted (in green) 
-		  to make it easier to determine whether you're watching primitive or civilized code 
-
-		- When you double-click a scenario in harness explorer, will open the scenario class and method in the eclips
-		  that launched harness explorer 
-
+		- It is possible to hide stack steps that are filtered
    </description>
 
-   <copyright url="http://autotelebuild/hudson/job/objective-eclipse-utils">
-        This software was developed by brundle and can be used anywhere.
+   <copyright url="http://autotelebuild/hudson/job/taksan-eclipse-utils">
+      This software was developed by Takeuchi and can be used anywhere.
 
-		Some useful utilities to develop in Objective projects
-
-			- Use CTRL+0 in maven project to create a test for the current open class, 
-			  or create the class for the current test, or just toggle between the two if they exists 
-			  
-			- In Civilized classes with primitive reservation, the reservation background becomes highlighted (in green) 
-			  to make it easier to determine whether you're watching primitive or civilized code 
-
-			- When you double-click a scenario in harness explorer, will open the scenario class and method in the eclips
-			  that launched harness explorer 
+      Some useful utilities: 
+		- Use CTRL+0 in maven project to create a test for the current open class, 
+		  or create the class for the current test, or just toggle between the two if they exists 
+		  
+		- It is possible to hide stack steps that are filtered
 
    </copyright>
 
-   <license url="http://autotelebuild/hudson/job/objective-eclipse-utils"><![CDATA[	
-        This software was developed by brundle and can be used anywhere.
+   <license url="http://autotelebuild/hudson/job/taksan-eclipse-utils"><![CDATA[	
+        This software was developed by Takeuchi and can be used anywhere.
 ]]></license>
 
    <plugin
-         id="objective-eclipse-utils"
+         id="taksan-eclipse-utils"
          download-size="0"
          install-size="0"
          version="0.0.0"

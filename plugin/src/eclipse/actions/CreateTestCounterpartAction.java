@@ -1,4 +1,4 @@
-package objective.actions;
+package eclipse.actions;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -11,6 +11,7 @@ import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorActionDelegate;
+import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPage;
@@ -18,6 +19,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -93,7 +95,10 @@ public class CreateTestCounterpartAction implements IObjectActionDelegate, IEdit
 	private void openCreatedResource(IResource resource, int position) {		
 		IWorkbenchPage activePage= fWindow.getActivePage();
 		try {
-			IDE.openEditor(activePage, (IFile) resource, true);
+			IEditorDescriptor desc = PlatformUI.getWorkbench().
+			        getEditorRegistry().getDefaultEditor(resource.getName());
+			
+			IDE.openEditor(activePage, (IFile) resource, desc.getId());
 			setCaretPositionIfNewFile(position, activePage);
 		} catch (PartInitException e) {
 			EditorsPlugin.log(e);

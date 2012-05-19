@@ -1,124 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension
-         point="org.eclipse.ui.editors.templates">
-      <template
-            autoinsert="true"
-            contextTypeId="java"
-            id="objective.eclipse.utils.template"
-            name="primitiva">
-         <pattern>
-/* PRIMITIVE RESERVATION BEGIN */
-
-/* PRIMITIVE RESERVATION END */
-         </pattern>
-      </template>
-   </extension>
-   
-   
-   	<extension
-	    id="objective.eclipse.utils.primitiveMarkerMissing"
-	    name="Primitive Marker Missing"
-	    point="org.eclipse.core.resources.markers">
-	  <super
-	    type="org.eclipse.core.resources.problemmarker">
-	  </super>
-	</extension>
-   
-	<extension
-	    id="objective.eclipse.utils.primitiveMarker"
-	    name="Primitive Marker"
-	    point="org.eclipse.core.resources.markers">
-	  <super
-	    type="org.eclipse.core.resources.textmarker">
-	  </super>
-	</extension>
-	<extension
-	      point="org.eclipse.ui.editors.annotationTypes">
-	   <type
-	         markerType="objective.eclipse.utils.primitiveMarker"
-	         name="objective.eclipse.utils.primitiveMarker">
-	   </type>
-	   <type
-	         markerType="objective.eclipse.utils.primitiveMarkerMissing"
-	         name="objective.eclipse.utils.primitiveMarkerMissing">
-	   </type>	   
-	</extension>
-	
-	<extension
-	      point="org.eclipse.ui.editors.markerAnnotationSpecification"
-	      id="objective.eclipse.utils.primitiveMarker"
-	      name="primitiveMarker">
-	   <specification
-	         annotationType="objective.eclipse.utils.primitiveMarker"
-	         colorPreferenceKey="objective.eclipse.utils.primitiveMarker.color"
-	         colorPreferenceValue="192,255,192"
-	         contributesToHeader="false"
-	         highlightPreferenceKey="objective.eclipse.utils.primitiveMarker.highlight"
-	         highlightPreferenceValue="true"
-	         includeOnPreferencePage="true"
-	         label="Primitive Marker"
-	         overviewRulerPreferenceKey="objective.eclipse.utils.primitiveMarker.overview"
-	         overviewRulerPreferenceValue="true"
-	         presentationLayer="0"
-	         textPreferenceKey="objective.eclipse.utils.primitiveMarker.text"
-	         textPreferenceValue="true"
-	         textStylePreferenceValue="BOX"
-	         verticalRulerPreferenceKey="objective.eclipse.utils.primitiveMarker.ruler"
-	         verticalRulerPreferenceValue="true"
-	         >
-	   </specification>
-	   
-	   <specification
-	         annotationType="objective.eclipse.utils.primitiveMarkerMissing"
-	         colorPreferenceKey="objective.eclipse.utils.primitiveMarkerMissing.color"
-	         colorPreferenceValue="255,0,0"
-	         contributesToHeader="false"
-	         highlightPreferenceKey="objective.eclipse.utils.primitiveMarkerMissing.highlight"
-	         highlightPreferenceValue="false"
-	         includeOnPreferencePage="true"
-	         label="Primitive Marker End Missing"
-	         overviewRulerPreferenceKey="objective.eclipse.utils.primitiveMarkerMissing.overview"
-	         overviewRulerPreferenceValue="true"
-	         presentationLayer="0"
-	         textPreferenceKey="objective.eclipse.utils.primitiveMarkerMissing.text"
-	         textPreferenceValue="true"
-	         textStylePreferenceValue="SQUIGGLES"
-	         verticalRulerPreferenceKey="objective.eclipse.utils.primitiveMarkerMissing.ruler"
-	         verticalRulerPreferenceValue="true"
-	         >
-	   </specification>
-	</extension>
-	
-	
-	  <extension
+	 <extension
 	        point="org.eclipse.ui.startup">
 	     <startup
-	           class="objective.Startup">
+	           class="eclipse.tools.Startup">
 	     </startup>
-	  </extension>
-    
-	 <extension
-         point="org.eclipse.ui.popupMenus">
+	 </extension>    
+	 <extension point="org.eclipse.ui.popupMenus">
       <objectContribution
             objectClass="org.eclipse.core.runtime.IAdaptable"
-            id="objective.actions.CreateTestCounterpartAction.contribution">
+            id="eclipse.actions.CreateTestCounterpartAction.contribution">
          <menu
-               label="Objective"
+               label="Taksan Utils"
                path="additions"
-               id="Objective.menu">
+               id="Taksan.utils.menu">
             <separator
                   name="testGroup">
             </separator>
          </menu>
          <action
                label="Create test counterpart"
-               class="objective.actions.CreateTestCounterpartAction"
-               menubarPath="Objective.menu/testGroup"
+               class="eclipse.actions.CreateTestCounterpartAction"
+               menubarPath="Taksan.utils.menu/testGroup"
                enablesFor="1"
-               id="objective.actions.CreateTestCounterpartAction"
-               definitionId="objective.actions.CreateTestCounterpartAction">
+               id="eclipse.actions.CreateTestCounterpartAction"
+               definitionId="eclipse.actions.CreateTestCounterpartAction">
          </action>
       </objectContribution>
    </extension>
@@ -129,47 +36,32 @@
        point="org.eclipse.ui.bindings">
 		<key 
 			sequence="Ctrl+0"
-			commandId="objective.actions.CreateTestCounterpartAction"
+			commandId="eclipse.actions.CreateTestCounterpartAction"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 			/>
 	</extension>
    
-	 <extension
-	       id="objective.commands"
-	       point="org.eclipse.ui.commands">
-	     <command
-            id="objective.actions.CreateTestCounterpartAction"
-            name="CreateTestCounterpartAction">
-	     </command>
-	 </extension>
+ <extension
+       id="objective.commands"
+       point="org.eclipse.ui.commands">
+     <command
+        id="eclipse.actions.CreateTestCounterpartAction"
+        name="CreateTestCounterpartAction">
+     </command>
+ </extension>
+	 
   <extension
         point="org.eclipse.ui.editorActions">
      <editorContribution
-           id="objective.eclipse.utils.createTestCounterpartEditorContribution"
+           id="eclipse.utils.createTestCounterpartEditorContribution"
            targetID="org.eclipse.jdt.ui.CompilationUnitEditor">
         <action
-              class="objective.actions.CreateTestCounterpartAction"
-              definitionId="objective.actions.CreateTestCounterpartAction"
-              id="objective.actions.CreateTestCounterpartAction"
+              class="eclipse.actions.CreateTestCounterpartAction"
+              definitionId="eclipse.actions.CreateTestCounterpartAction"
+              id="eclipse.actions.CreateTestCounterpartAction"
               label="CreateTestCounterpartAction"
               style="push">
         </action>
      </editorContribution>
   </extension>
-  <extension point="org.eclipse.jdt.debug.javaLogicalStructures">
-  	<javaLogicalStructure
-  	  description="EntidadeAtributos"
-      subtypes="true"
-      value="return objective.core.entidade.inspector.AtributosFormaterImpl.map(this);"
-      type="objective.core.entidade.Entidade"/>
-	</extension>
-	
-      <extension point="org.eclipse.core.runtime.adapters">
-         <factory 
-            class="objective.MyFileAdapterFactory" 
-            adaptableType="org.eclipse.core.resources.IFile">
-            <adapter type="com.xyz.MyFile"/>
-         </factory>
-      </extension>
-	
 </plugin>

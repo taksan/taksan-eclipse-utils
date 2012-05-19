@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Objective Eclipse Utils
-Bundle-SymbolicName: objective-eclipse-utils;singleton:=true
+Bundle-Name: Taksan Eclipse Utils
+Bundle-SymbolicName: taksan-eclipse-utils;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: objective.ObjectiveUtilsPlugin
+Bundle-Activator: eclipse.tools.TaksanUtilsPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui.editors;bundle-version="3.7.0",

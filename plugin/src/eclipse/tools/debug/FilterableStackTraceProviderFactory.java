@@ -1,6 +1,5 @@
-package objective.debug;
+package eclipse.tools.debug;
 
-import objective.FilteredJavaThreadContentProvider;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/objective-eclipse-utils.feature_1.0.0.qualifier.jar" id="objective-eclipse-utils.feature" version="1.0.0.qualifier">
-      <category name="objective-eclipse-utils.category"/>
+   <feature url="features/taksan-eclipse-utils.feature_1.0.0.qualifier.jar" id="taksan-eclipse-utils.feature" version="1.0.0.qualifier">
+      <category name="taksan-eclipse-utils.category"/>
    </feature>
-   <category-def name="objective-eclipse-utils.category" label="Utilidades de Produtividade Objective">
+   <category-def name="taksan-eclipse-utils.category" label="Some useful tools">
       <description>
-         objective-eclipse-utils
+         taksan-eclipse-utils
       </description>
    </category-def>
 </site>
