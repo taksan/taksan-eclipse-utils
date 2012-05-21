@@ -24,12 +24,14 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
 @SuppressWarnings("restriction")
 public class StackFrameFilterManagerImpl implements StackFrameFilterManager {
 
-	private static final String CLASS_USED_BY_DEBUG_VIEW_TO_GET_STACK_FRAMES = "org.eclipse.jdt.debug.core.IJavaThread";
+	private static final String DEBUG_VIEW_ID = "org.eclipse.debug.ui.DebugView";
+	private static final String DEBUG_VIEW_CONTENT_MODEL = "org.eclipse.jdt.debug.core.IJavaThread";
 	private static final String DEFAULT_JAVA_THREAD_FACTORY = "MonitorsAdapterFactory";
 	private static boolean hideFilteredFrames;
 
@@ -38,11 +40,10 @@ public class StackFrameFilterManagerImpl implements StackFrameFilterManager {
 		removeDefaultDebugFactory(manager);
 		makeStackTraceFilterable(manager);
 	}
-
 	
 	@Override
 	public boolean isHideFilteredStackFrames() {
-		return DebugPlugin.isUseStepFilters() && hideFilteredFrames;
+		return hideFilteredFrames;
 	}
 	
 	@Override
@@ -56,7 +57,7 @@ public class StackFrameFilterManagerImpl implements StackFrameFilterManager {
 	private void removeDefaultDebugFactory(IAdapterManager manager) {
 		HashMap<String,IAdapterFactory> factories = ((AdapterManager)manager).getFactories();
 		List<IAdapterFactory> adapterFactories = (List<IAdapterFactory>) 
-				factories.get(CLASS_USED_BY_DEBUG_VIEW_TO_GET_STACK_FRAMES);
+				factories.get(DEBUG_VIEW_CONTENT_MODEL);
 		
 		IAdapterFactory factoryToRemove = null;
 		if (adapterFactories == null)
@@ -80,18 +81,7 @@ public class StackFrameFilterManagerImpl implements StackFrameFilterManager {
 	private void listenPrefsToUpdateDebugViewAppropriately() {
 		IScopeContext context = InstanceScope.INSTANCE;
 			
-		IPreferenceChangeListener listener = new IPreferenceChangeListener() {
-			@Override
-			public void preferenceChange(PreferenceChangeEvent event) {
-				String activeFiltersList = IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST;
-				String prefUseStepFilters = StepFilterManager.PREF_USE_STEP_FILTERS;
-				List<String> watchablePrefs = Arrays.asList(activeFiltersList,prefUseStepFilters);
-				
-				if (watchablePrefs.contains(event.getKey())) {
-					refreshDebugView();
-				}
-			}
-		};
+		IPreferenceChangeListener listener = new ListenStepFilterChangesToUpdateStackFrameView();
 		IEclipsePreferences debugNode = context.getNode(DebugPlugin.getUniqueIdentifier());
 		debugNode.addPreferenceChangeListener(listener);
 		
@@ -105,7 +95,7 @@ public class StackFrameFilterManagerImpl implements StackFrameFilterManager {
 		Display.getDefault().asyncExec(new Runnable() {
 		    @Override
 		    public void run() {
-				LaunchView debugView = (LaunchView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.debug.ui.DebugView");
+				LaunchView debugView = (LaunchView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(DEBUG_VIEW_ID);
 				IToolBarManager tbm = debugView.getViewSite().getActionBars().getToolBarManager();
 				IAction action = new HideFilteredStackFramesAction(StackFrameFilterManagerImpl.this);
 				tbm.appendToGroup(IDebugUIConstants.RENDER_GROUP, 
@@ -115,9 +105,23 @@ public class StackFrameFilterManagerImpl implements StackFrameFilterManager {
 	}
 		
 	private static void refreshDebugView() {
-		LaunchView debugView = (LaunchView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.debug.ui.DebugView");
+		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		LaunchView debugView = (LaunchView) activePage.findView(DEBUG_VIEW_ID);
 		TreeModelViewer viewer = (TreeModelViewer) debugView.getViewer();
 		viewer.refresh();
 	}
 
+	private final class ListenStepFilterChangesToUpdateStackFrameView implements
+			IPreferenceChangeListener {
+		@Override
+		public void preferenceChange(PreferenceChangeEvent event) {
+			String activeFiltersList = IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST;
+			String prefUseStepFilters = StepFilterManager.PREF_USE_STEP_FILTERS;
+			List<String> watchablePrefs = Arrays.asList(activeFiltersList, prefUseStepFilters);
+
+			if (watchablePrefs.contains(event.getKey())) {
+				refreshDebugView();
+			}
+		}
+	}
 }
