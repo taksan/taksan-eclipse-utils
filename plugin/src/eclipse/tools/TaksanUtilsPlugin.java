@@ -11,7 +11,7 @@ import org.osgi.framework.BundleContext;
  * The activator class controls the plug-in life cycle
  */
 public class TaksanUtilsPlugin extends AbstractUIPlugin {
-	public static final String PLUGIN_ID = "objective.eclipse.utils"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "taksan-eclipse-utils"; //$NON-NLS-1$
 
 	private static TaksanUtilsPlugin plugin;
 

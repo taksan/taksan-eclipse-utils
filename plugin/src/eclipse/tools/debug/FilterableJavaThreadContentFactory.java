@@ -6,9 +6,14 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentPr
 import org.eclipse.jdt.debug.core.IJavaThread;
 
 @SuppressWarnings({ "rawtypes", "restriction" })
-class FilterableStackTraceProviderFactory implements
+class FilterableJavaThreadContentFactory implements
 		IAdapterFactory {
 	Object fgCPThread;
+	private StackFrameFilterManager manager;
+	
+	public FilterableJavaThreadContentFactory(StackFrameFilterManager manager) {
+		this.manager = manager;
+	}
 
 	@Override
 	public Class[] getAdapterList() {
@@ -27,7 +32,7 @@ class FilterableStackTraceProviderFactory implements
 
 	private Object getThreadPresentation() {
 		if (fgCPThread == null) {
-			fgCPThread = new FilteredJavaThreadContentProvider();
+			fgCPThread = new FilteredJavaThreadContentProvider(manager);
 		}
 		return fgCPThread;
 	}
