@@ -49,10 +49,10 @@ public class TestCounterpartCreator {
 	private ICompilationUnit createTestClass(
 			IPackageFragment unitPackage,
 			String unitFileName) {
+		ICompilationUnit parentUnit = null;
 		try {
 			IProgressMonitor monitor = getMonitor();
-			ICompilationUnit parentUnit = unitPackage.createCompilationUnit(
-					unitFileName, "", false, monitor);
+			parentUnit = unitPackage.createCompilationUnit(unitFileName, "", false, monitor);
 	
 			parentUnit.becomeWorkingCopy(monitor);
 			
@@ -68,6 +68,19 @@ public class TestCounterpartCreator {
 			return createdTestUnit;
 		}catch(JavaModelException e) {
 			throw new UnhandledJavaModelException(e);
+		}
+		finally {
+			discardWorkingCopyOrCry(parentUnit);
+		}
+	}
+
+	private void discardWorkingCopyOrCry(ICompilationUnit parentUnit) {
+		if (parentUnit != null) {
+			try {
+				parentUnit.discardWorkingCopy();
+			} catch (JavaModelException e) {
+				throw new UnhandledJavaModelException(e);
+			}
 		}
 	}
 	
