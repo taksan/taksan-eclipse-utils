@@ -37,7 +37,7 @@ public class StackFrameFilterManagerImpl implements StackFrameFilterManager {
 
 	public void start() {
 		IAdapterManager manager= Platform.getAdapterManager();
-		removeDefaultDebugFactory(manager);
+		removeDefaultDebugFactoryFrom(manager);
 		makeStackTraceFilterable(manager);
 	}
 	
@@ -54,10 +54,9 @@ public class StackFrameFilterManagerImpl implements StackFrameFilterManager {
 	
 
 	@SuppressWarnings("unchecked")
-	private void removeDefaultDebugFactory(IAdapterManager manager) {
+	private void removeDefaultDebugFactoryFrom(IAdapterManager manager) {
 		HashMap<String,IAdapterFactory> factories = ((AdapterManager)manager).getFactories();
-		List<IAdapterFactory> adapterFactories = (List<IAdapterFactory>) 
-				factories.get(DEBUG_VIEW_CONTENT_MODEL);
+		List<IAdapterFactory> adapterFactories = (List<IAdapterFactory>) factories.get(DEBUG_VIEW_CONTENT_MODEL);
 		
 		IAdapterFactory factoryToRemove = null;
 		if (adapterFactories == null)
